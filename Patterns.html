@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Patterns</title>
+  <style>
+    body {
+      font-size: 2rem;
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+<body>
+  <h1>
+    The Container/Presentational Pattern
+  </h1>
+  
+  <p>
+    Esse design pattern de React visa separar a lógica que gerencia os estados e dados da lógica de renderização de componentes, promovendo código mais organizado e fácil de ser lido. 
+  </p>
+
+  <p>
+    Nesse padrão, dividimos nosso componente em 2 categorias: <strong>containers</strong> e <strong>presentational components</strong>.
+  </p>
+
+  <h2>
+    Container Components
+  </h2>
+
+  <p>
+    <mark>Container components</mark> são responsáveis por gerenciar os estados e a manipulação de dados da aplicação. Eles interagem com recursos externos como Redux, contextos ou qualquer outra fonte de dados externa, além de realizar requisições http, lidar com as interações do usuário e gerenciar o estado do componente. <strong><mark>Esse tipo de componente não contém nenhum código de renderização de componentes, ou seja, eles não produzem JSX</mark></strong>. Normalmente, esses componentes são class-basec, mas podem ser implementados na abordagem funcional utilizando hooks.
+  </p>
+
+  <h2>
+    Presentational Components
+  </h2>
+
+  <p>
+    <mark>Presentational components</mark> são responsáveis apenas pela lógica de renderização de UI. Eles se comunicam com os componentes containeres utilizando funções callbacks e dados como <code>'props'</code>. Utilizando essas propriedades, eles renderizam a UI.
+  </p>
+
+  <p>
+    Componentes de apresentação são <em><strong><mark>stateless</mark></strong></em>. Isso significa que eles não possuem "memória", ou seja um componente de apresentação deve renderizar a mesma UI caso um dado repetido seja passado para ele. Eles podem ser implementados como componentes funcionais, pois dependem apenas dos dados que são atribuidos a ele.
+  </p>
+
+  <h2>
+    Class Components
+  </h2>
+
+  <p>
+    Antes dos Hooks, era comum utilizar esse padrão de seperação de componentes para isolar a lógica da "view". Basicamente, era criados dois arquivos para um único componente: um arquivo para a lógica e outro para a view.
+  </p>
+
+  <span>
+    Exemplo: Temos um componente chamado <code>"Counter"</code>
+  </span>
+
+  <code>
+    <pre>
+      // CounterView.js
+      // Um arquivo de apresentação para o componente
+      
+      const CounterView = ({ count, increment }) => (
+        div>
+          p>
+            Count: {count}
+          /p>
+          button onClick={increment}> Increment < /button>
+        /div>
+      )
+
+      export default CounterView
+    </pre>
+  </code>
+<hr>
+  <code>
+    <pre>
+      // CounterContainer.js
+      // Um arquivo container para a lógica do componente
+
+      import React, { Component } from 'react';
+      import CounterView from './CounterView';
+
+      class CounterContainer extends Component {
+        state = {
+          count: 0
+        }
+
+        increment = () => {
+          this.setState(prevState => ({
+            count: prevState.count + 1
+          }));
+        }
+
+        render() {
+          return {
+            < CounterView count={this.state.count} increment{() => increment() </ CounterView>}
+          }
+        }
+      }
+    </pre>
+  </code>
+
+  <p>
+    Essa era a maneira antiga de construir esse pattern em React. O código acima demonstra que a equipe do React não sabe de forma alguma utilizar Programação Orientada a Objetos.
+  </p>
+
+  <h2>
+    Utilizando Custom Hooks
+  </h2>
+
+  <p>
+    Na maioria dos casos, o <mark><strong>Container/Presentational pattern pode ser substituido por custom hooks</strong></mark>. No exemplo abaixo vamos construir um custom hook para realizar requisições http para uma api:
+  </p>
+
+  <code>
+    <pre>
+      // useStarWarsPeople.ts
+      // Custom hook para buscar dados de uma API de Star Wars
+
+      export default useStarWarsPeople() {
+        const [ people, setPeople ] = useState([]);
+
+        useEffect(() => {
+          async function fetchStarWarsPeople() {
+            const res = await fetch(url);
+
+            const { results } = await res.json();
+            setPeople(results);
+          }
+
+          fetchStarWarsPeople();
+        }, []);
+
+        return people
+      }
+    </pre>
+  </code>
+
+  <hr>
+
+  <code>
+    <pre>
+      // Componente de apresentação StarWarsPeople.ts
+
+      export default function StarWarsPeople() {
+        const people = useStarWarsPeople();
+
+        return (
+          <>
+            User Interface
+          </>
+        )
+      }
+    </pre>
+  </code>
+
+  <h2>
+    Conclusão
+  </h2>
+
+  <p>
+    Implementar esse pattern pode tornar sua codebase mais escalável e fácil de dar manutenção. Com uma separação clara das responsabilidades de um componente, se torna mais fácil realizar alterações e atualizações sem afetar outras partes do código.
+  </p>
+</body>
+</html>

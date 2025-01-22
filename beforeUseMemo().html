@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Before useMemo()</title>
+  <style>
+    body {
+      font-size: 2rem;
+    }
+
+    img {
+      display: flex;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>
+    Técnicas que você precisa testar antes de utilizar <code>useMemo()</code>
+  </h1>
+  
+  <p>
+    Existem vários artigos na internet que explicam como otimizar uma aplicação React. Geralmente, se alguma atualização de estado está lenta, precisamos realizar 3 passos:
+  </p>
+
+  <ul>
+    <li>
+      Verificar se estamos executando nossa aplicação em ambiente de desenvolvimento ou em ambiente de produção. Isso porque um ambiente de desenvolvimento é intencionalmente mais lento.
+    </li>
+    <li>
+      Certifique-se de organizar os estados de forma adequada na hierarquia de componentes. Por exemplo, evitar colocar o estado de um input em uma store centralizada, como Redux, pode ser crucial. Isso ocorre porque centralizar estados locais, como o valor de inputs, pode introduzir complexidade desnecessária, causar re-renders em componentes que não precisam e dificultar a manutenção do código. O ideal é manter estados locais diretamente no componente relacionado ou em um pai próximo, garantindo eficiência e simplicidade. 
+    </li>
+    <li>
+      Executar o React DevTools Profiler para verificar quais componentes estão sendo re-renderizados, e então utilizar <code>React.memo()</code> ou <code>useMemo()</code> nas operações mais custosas.
+    </li>
+  </ul>
+
+  <p>
+    Essas passos fazem parte do processo básico de otimização de uma aplicação React. Entretanto, existem outras técnicas que as pessoas frequentemente se esquecem por serem mais básicas que os passos acima. Essas técnicas podem evitar que você utilize <code>React.memo</code> e <code>useMemo()</code> desnecessáriamente no seu código.
+  </p>
+
+  <h1>
+    Criando um componente lento artificial
+  </h1>
+
+  <p>
+    Para fins de ilustração, vamos criar um componente propositalmente lento:
+  </p>
+
+  <code>
+    <pre>
+      import { useState } from 'react';
+
+      export default function App() {
+        let [color, setColor] = useState('red');
+
+        return (
+          <.div>
+            <.input value={color} onChange(() => setColor(e.target.value)) />
+            <.p style={{ color }}> Hello, world!</.p>
+            <.ExpensiveComponent />
+          <./div>
+        );
+      }
+
+      function ExpensiveComponent() {
+        let now = performance.now();
+        while( performance.now() - now < 100) {
+          // Delay artificial - faça nada durante 100ms
+        }
+
+        return <.p>1 am a very slow component tree,<./p>
+      }
+    </pre>
+  </code>
+
+  <p>
+    O problema do componente acima é que, toda vez que o estado <code><strong>color</strong></code> mudar, todo o componente <code>App</code> vai ser re-renderizado, inclusive o <code>ExpensiveComponent</code>. 
+  </p>
+
+  <p>
+    Poderiamos facilmente resolver esse problema adicionando um <code>memo()</code> no componente
+  </p>
+
+  <img src="https://i.imgur.com/DaZpPiP.png" alt="">
+
+  <p>
+    Porem quero mostrar formas diferente de debuggar esse problema, evitando utilizar técnicas poderosas demais para problemas que podem ser resolvidos de forma simples.
+  </p>
+
+  <h1>
+    Primeira solução: Mover o estado para baixo
+  </h1>
+
+  <p>
+    Se você analisar bem o código acima, vai perceber que o componente custoso <code>ExpensiveComponent</code> não depende do estado <code>color</code> para funcionar. Ele só está sendo re-renderizado por estar na mesma subarvore do DOM.
+  </p>
+
+  <p>
+    Então <mark><strong>podemos extrair todas as linhas que depende do estado em um novo componente</strong></mark>. Dessa maneira, o estado é encapsulado em um único componente, e caso ele sofra alteração, apenas esse componente vai ser re-renderizado.
+  </p>
+
+  <img src="https://i.imgur.com/tvdqXpv.png" alt="">
+
+  <h1>
+    Segunda solução: Lift Content Up
+  </h1>
+
+  <p>
+    A solução acima não funciona caso o estado precisa ser usado por um elemento pai comum. Por exemplo, um elemento <code>div</code> utiliza o estado <code>color</code> para renderizar algo na UI e <code>ExpensiveComponent</code> precisa ser um filho direto da <code>div</code>. O que fazemos agora? Utilizamos <code>memo</code>?
+  </p>
+
+  <img src="https://i.imgur.com/vufCUn9.png" alt="">
+
+  <span>
+    A resposta é mais simples do que você esperava!
+  </span>
+
+  <img src="https://i.imgur.com/8nGWDDj.png" alt="">
+
+  <p>
+    Nós dividimos o componente <code>App</code> em dois. Os elementos que dependem do estado <code>color</code> foram movidos para o componente <code>ColorPicker</code>, enquanto as partes que não precisam do estado continuaram no componente <code>App</code>. O componente <code>ColorPicker</code> recebe esses elementos que não necessitam do estado como <code>children</code>.
+  </p>
+
+  <p>
+    Agora, quando o estado <code>color</code> mudar, <code>ColorPicker</code> é re-renderizado, porém como sua propriedade <code>children</code> não sofreu alteração, o React não re-renderiza os elementos filhos.
+  </p>
+
+  <p>
+    E como resultado, <code>ExpensiveComponent</code> não é re-renderizado.
+  </p>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Styled Components</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <h1>
+    O que é o Styled Components?
+  </h1>
+  
+  <p>
+    É uma biblioteca CSS criado para React. Como o nome diz, o framework permite estilizar os componentes diretamente com CSS. Utiliza de <mark><strong>template literals</strong></mark> para estilizar os componentes e remove o mapeamento entre componentes e estilos.
+  </p>
+
+  <p>
+    No Styled Components, definimos nossos estilos diretamente no componente, promovendo assim um escopo local e evitando bugs de estilos na nossa aplicação.
+  </p>
+
+  <h1>
+    Utilizando o Styled Components
+  </h1>
+
+  <p>
+    Instale a biblioteca como uma dependencia de desenvolvedor pois os estilos aplicados são convertidos em CSS puro no processo de build.
+    <pre><code><strong>npm i -D styled-components</strong></code></pre>
+  </p>
+
+  <p>
+    Crie uma pasta onde vai servir para armazenar o arquivo de estilos. Nomeie o arquivo como <code>styles.ts</code> ou <code>style.js</code>, como preferir.
+    <pre>
+      <code>
+        >src
+          >styles 
+            >styles.ts
+      </code>
+    </pre>
+  </p>
+
+  <p>
+    Importe o Styled components nesse arquivo <code>styles.ts</code>.
+    <pre><code><strong>import styled from 'styled-components'</strong></code></pre>
+    <!-- <pre><code><strong>import * as S from 'styled-components'</strong></code></pre> -->
+  </p>
+
+  <h2>
+    Declarando componentes estilizados
+  </h2>
+
+  <p>
+    No Styled Components, declaramos um componente e em seguida aplicamos os estilos usando <mark>template literals</mark>. O nome desse componente pode ser qualquer coisa que desejarmos. Se quisermos que dois botões tenham estilos diferentes, estilizamos assim:
+    <pre>
+      <code>
+        <strong>
+          const PrimaryButton = styled.button`
+            background-color: red;
+          `;
+
+          const SecondaryButton = styled.button`
+            background-color: red;
+          `
+        </strong>
+      </code>
+    </pre>
+    As propriedades CSS vão dentro das aspas ou template literals. Com o componente declarado e estilizado, podemos utilizado diretamente nos nossos arquivos JSX.
+  </p>
+
+  <p>
+    Após isso, nós importamos o componente estilizado no componente principal referente usando a <mark>convenção do S</mark> para maior legibilidade do código.
+    <pre>
+      <code>
+        <strong>
+          import * as S from "./styles/styles.ts";
+
+          function MyButtons() {
+            return (
+              <>
+                <-S.PrimaryButton>Sou o botão principal<-/S.PrimaryButton>
+                <-S.SecondaryButton>Sou o botão secundário<-/S.SecondaryButton>
+              </>
+            );
+          }
+        </strong>
+      </code>
+    </pre>
+    <mark>A convenção do S ajuda a identificar quais componentes são componentes estilizados.</mark> Note que os usamos como se fossem tags HTML, é como se tivessemos dando classes para nossas tags e as estilizando no arquivo CSS, segue o mesmo principio.
+  </p>
+
+  <h2>
+    Utilizando propriedades
+  </h2>
+
+  <p>
+    Styled Components permite utilizar propriedades do React para criarmos estilos dinâmicos. Usamos essa mecânica da mesma forma que o React, passando a propriedade em forma de atributo do componente:
+    <pre>
+      <code>
+        <strong>
+          <-S.PrimaryButton cor="00FF00">Sou o botão principal<- /S.PrimaryButton>
+        </strong>
+      </code>
+    </pre>
+  </p>
+
+  <p>
+    No exemplo acima estamos enviado a cor #00FF00 como propriedade para o componente. E para recebermos essa props no Styled Components, utilizamos uma função de seta.
+    <pre>
+      <code>
+        <strong>
+          const PrimaryButton = styled.button`
+            background-color: ${props => props.cor};
+          `;
+        </strong>
+      </code>
+    </pre>
+  </p>
+
+  <h2>
+    Utilizando atributos
+  </h2>
+
+  <p>
+    No React ou no Styled Components podemos inserir atributos nos nossos componentes de duas formas:
+    <ol>
+      <li>
+        Declarando os atributos diretamente no componente:
+        <code>
+          <strong>
+            <pre>
+              <-S.SubmitButton type="submit" disabled={loading ? true : false}>
+                  Enviar
+              <-/-S.SubmitButton>
+            </pre>
+          </strong>
+        </code>
+      </li>
+      <li>
+        Ou podemos usar atributos personalizados com <strong><code>`.attrs`</code></strong>. Essa função permite definir atributos HTML padrão ou passar props personalizadas para o componente:
+        <code>
+          <strong>
+            <pre>
+              const Input = styled.input.attrs(props => ({
+                type: 'text',
+                placeholder: props.placeholder || 'Digite algo...'
+              }))`
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+              `;
+
+              const App = () => (
+                <-Input placeholder="Seu nome" />
+              );
+            </pre>
+          </strong>
+        </code>
+      </li>
+    </ol>
+  </p>
+
+  <h1>
+    Usando animações em Styled Components
+  </h1>
+
+  <p>
+    Para criar animações no Styled Components, importamos as funções <strong><code>keyframes</code></strong> e <strong><code>css</code></strong>.
+    <pre><code><strong>import styled, {keyframes, css} from 'styled-components';</strong></code></pre>
+  </p>
+
+  <p>
+    Após importa-las, as declaramos como componentes estilizados:
+    <pre>
+      <code>
+        <strong>
+          const SpinnerAnimation = keyframes`
+            from{
+              transform: rotate(0deg);
+            }
+          
+            to {
+              transform: rotate(360deg);
+            }
+          `
+        </strong>
+      </code>
+    </pre>
+    Acima, nós declaramos o comportamento de uma animação para um icone de loading. Para utiliza-las no elemento, usamos a função <strong>css</strong>.
+    <pre>
+      <code>
+        <strong>
+          ${props => props.disabled && css`
+            svg {
+              animation: ${SpinnerAnimation} 2s linear infinite;
+            }
+          `}
+        </strong>
+      </code>
+    </pre>
+    No exemplo acima, estamos acessando a propriedade <strong><code>disabled</code></strong> do elemento, que tem como valor <mark><strong>true</strong></mark> ou <mark><strong>false</strong></mark>. Usando o <mark><strong>Guard Operator</strong></mark>, nós executamos o css no elemento <strong><code>svg</code></strong> apenas quando <strong><code>disabled</code></strong> for <strong>true</strong>.
+  </p>
+
+  <h1>
+    Propriedades transitórias
+  </h1>
+
+  <p>
+    Para evitar que o React console error seja disparado devido a props desconhecidas sendo passadas para o DOM, você pode
+    usar <mark>props transitórias (transient props)</mark> com styled-components. Transient props são props que começam com um <strong>cifrão($)<mark></strong>. Elas são automaticamente filtradas pelo styled-components, de forma que não são passadas para o DOM.</mark>
+  </p>
+
+  <p>
+    Aqui está um exemplo de como usar transient props:
+    <strong>
+      <code>
+        <pre>
+          import styled from 'styled-components';
+          
+          interface ButtonProps {
+            $active?: boolean;
+          }
+          
+          const Button = styled.button<ButtonProps>`
+            background-color: ${props => props.$active ? 'green' : 'gray'};
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            `;
+
+            export function Component() {
+            return (
+              <-div>
+                <-Button $active={true}>Active Button</-Button>
+                <-Button>Inactive Button</-Button>
+              </-div>
+            );
+            }
+        </pre>
+      </code>
+    </strong>
+  </p>
+
+  <h5>
+    Explicação
+  </h5>
+
+  <ol>
+    <li>
+      <strong>Definição do Componente:</strong>
+      <ul>
+        <li>Definimos uma interface ButtonProps que inclui uma prop transitória $active.</li>
+        <li>No estilo do componente, usamos props.$active para determinar a cor de fundo.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Uso do Componente:</strong>
+      <ul>
+        <li>Quando utilizamos o componente Button, passamos a prop transitória $active. Essa prop será usada pelo styled-components
+        para estilização, mas não será passada para o DOM, evitando assim o erro no console do React.</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h1>
+    Composição de componentes
+  </h1>
+
+  <p>
+    No Styled Components, nós declaramos um componente e o definimos como alguma tag HTML semântica que seja apropriado ao componente, por exemplo:
+      <p>
+        Um container deve ser uma <strong>div</strong>, um botão é a tag <strong>button</strong> e um link se refere a tag <strong>a</strong>
+        <code>
+          <strong>
+            <pre>
+              const Container = styled.div``;
+              const Botão = styled.button``;
+              const Link = syled.a``;
+            </pre>
+          </strong>
+        </code>
+      </p>
+  </p>
+
+  <p>
+    Podemos também utilizar um componente para definir outro componente. Essa técnica é chamada de <strong><mark>composição de componentes</mark></strong>. Isso permite que você <strong>estenda</strong> estilos de um componente existente para criar um novo componente com estilos adicionais ou modificados. Exemplo:
+    <strong>
+      <p>Primeiro, define o componente base</p>
+      <code>
+        <pre>
+          import styled from 'styled-components';
+          
+          const BotaoBase = styled.button`
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+          `;
+        </pre>
+      </code>
+      Em seguida, defina um novo componente que estende os estilos do componente base, podendo sobrescreve-los ou nao. 
+      <code>
+        <pre>
+          const BotaoPrimario = styled(BotaoBase)`
+            background-color: darkblue;
+            font-weight: bold;
+            `;
+            
+            const BotaoSecundario = styled(BotaoBase)`
+              background-color: gray;
+              color: black;
+          `;
+        </pre>
+      </code>
+      Agora podemos utilizar 3 botões na nossa UI reutilizando os estilos do componente base.
+    </strong>
+  </p>
+</body>
+</html>

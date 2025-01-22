@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lidando com erros em React</title>
+  <style>
+    body {
+      font-family: Verdana, Geneva, Tahoma, sans-serif, Helvetica, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>
+    Usando a biblioteca react-error-boundary
+  </h1>
+
+  <p>
+    Em react, uma forma fácil e intuitiva de lidar com erros é usando a lib
+    <strong><code>react-error-boundary</code></strong>. Essa biblioteca permite envolver nossos componentes em um
+    componente fallback que será disparado quando encontrar um erro.
+  </p>
+
+  <p>
+    Para que isso funcione precisamos explicitamente lançar um erro de dentro dos nossos componentes pois, como é um
+    evento, o erro vai borbulhar na árvore do DOM até alcançar nosso componente fallback.
+  </p>
+
+  <p>
+    Caso seja necessário, podemos envolver cada componente com uma fallback diferente, para renderizar páginas de erros
+    específicas, mas por padrão, envolver os componentes no arquivo <strong><code>app.tsx</code></strong> já é
+    suficiente para lidar com erros do código.
+  </p>
+
+  <h1>
+    Maneiras de renderizar erros
+  </h1>
+
+  <p>
+    No react-error-boundary, temos várias maneiras de renderizar um erro:
+  </p>
+
+  <p>
+    Podemos utilizar uma <mark>fallback prop</mark>, que renderiza diretamente um conteúdo HTML.
+    <code>
+      <strong>
+        <pre>
+          "use client";
+          
+          import { ErrorBoundary } from "react-error-boundary";
+          
+          <-ErrorBoundary fallback={<-div>Something went wrong</-div>}>
+            <-ExampleApplication />
+          <-/ErrorBoundary>
+        </pre>
+      </strong>
+    </code>
+  </p>
+
+  <p>
+    E odemos utilizar uma <mark>fallbackComponent prop</mark> para renderizar um componente inteiro:
+    <code>
+      <strong>
+        <pre>
+          "use client";
+          
+          import { ErrorBoundary } from "react-error-boundary";
+          
+          function Fallback({ error, resetErrorBoundary }) {
+          // Call resetErrorBoundary() to reset the error boundary and retry the render.
+          
+          return (
+          <-div role="alert">
+            <-p>Something went wrong:</-p>
+            <-pre style={{ color: "red" }}>{error.message}</-pre>
+          </-div>
+          );
+          }
+          
+          <-ErrorBoundary FallbackComponent={Fallback} onReset={(details)=> {
+            // Reset the state of your app so the error doesn't happen again
+            }}
+            >
+            <-ExampleApplication />
+          <-/ErrorBoundary>;
+        </pre>
+      </strong>
+    </code>
+  </p>
+</body>
+
+</html>

@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React</title>
+  <style>
+    body {
+      font-family: Verdana, Geneva, Tahoma, sans-serif, Helvetica, sans-serif;
+    }
+
+    img {
+      display: flex;
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>
+    O que é JSX?
+  </h1>
+
+  <p>
+    JSX é uma extensão de JavaScript que é usada principalmente pelo React. Ele permite que você misture código JavaScript com sintaxe de HTML, o que torna mais fácil escrever componentes de interface em um único arquivo de código.
+  </p>
+
+  <p>
+    Em React, componentes sempre retornam JSX, e por padrão só podem retornam 1 elemento JSX por componente. Para retornar mais de um elemento, é necessário que esses elementos estejam dentro de um elemento pai, como uma <strong><code>div</code></strong>. 
+  </p>
+
+  <p>
+    Porém, se adicionarmos várias divs em vários componentes para que retornem multiplos elementos, nosso DOM vai acabar poluido com <code>divs</code> desnecessárias. Para isso, podemos utilizar um <strong><code>React fragment</code></strong>, que vai ser como o elemento pai que envolve os elementos, assim quando o componente renderizar no DOM, os elementos serão dispostos diretamente sem uma <code>div</code> pai.
+  </p>
+
+  <p>
+    A sintaxe de um fragmento de React é caracterizada por <strong><mark><code>'&lt;&gt; &lt;/&gt;'</code></mark></strong>.
+    <pre>
+      <code>
+        function MyApp() {
+          return (
+            &lt;&gt;
+            &lt;div className='title'&gt;Meu componente&lt;/div&gt;
+            &lt;&gt;
+          )
+        }
+      </code>
+    </pre>
+  </p>
+  <h1>
+    Configurando React com Vite
+  </h1>
+
+  <p>
+    Vite é uma ferramenta de build para front-end que oferece um ambiente rápido e eficiente para criar e configurar
+    projetos. Ele facilita a criação - ou scaffold - de código boilerplate da aplicação, proporcionando uma experiência
+    otimizada com recarregamento rápido durante o desenvolvimento e builds rápidas para produção.
+  </p>
+  <p>
+    <strong>"Scaffold"</strong> é um termo em inglês que se refere à geração automática de código e estrutura básica
+    para uma aplicação, ajudando os desenvolvedores a iniciar seus projetos mais rapidamente e com menos código
+    repetitivo.
+  </p>
+
+  <p>
+    O termo <strong>"build"</strong> se refere ao processo de transformar o código-fonte de um projeto em uma versão
+    final que pode ser usada em produção. Esse processo pode envolver várias estapas, como:
+  <ul>
+    <li><strong>Transpilar código:</strong> Converter código escrito em linguagens modernas como TypeScript para uma
+      versão compatível com mais navegadores</li>
+    <li><strong>Minificação:</strong> Reduzir o tamanho dos arquivos removendo espaços em branco, comentários e
+      encurtando o nome de variáveis.</li>
+    <li><strong>Bundling:</strong> Combinar múltiplos arquivos de código em um ou poucos arquivos para reduzir o número
+      de requisições HTTP</li>
+    <li><strong>Otimização de imagens:</strong> Compactar imagens para reduzir o tempo de carregamento</li>
+    <li><strong>Adição de Polifills:</strong> Incluir código que adiciona suporte para recursos modernos em navegadores
+      mais antigos</li>
+  </ul>
+  </p>
+
+  <p>
+    Vamos utilizar Vite para rapidamente dar inicio a um projeto React. Execute o código abaixo no terminal:
+  <pre>
+      <code>
+        <strong>
+          npm create vite@latest
+        </strong>
+      </code>
+    </pre>
+  O novo projeto foi criado na pasta <strong>react-tutorial</strong>. Vite nos da instruções dos proximos passos no
+  terminal, devemos executar os comandos abaixo para iniciar a nossa aplicação:
+  <pre>
+      <code>
+        cd react-tutorial
+        npm install
+        npm run dev
+      </code>
+    </pre>
+  </p>
+
+  <h1>
+    Entendendo a estrutura de pastas do Vite
+  </h1>
+
+  <p>
+    Quando criamos um novo projeto com Vite, React e TypeScript, a estrutura de pastas criada se assemelha a essa:
+  <pre>
+      <code>
+        my-vite-project/
+        ├── node_modules/
+        ├── public/
+        │   └── favicon.ico
+        ├── src/
+        │   ├── assets/
+        │   │   └── logo.svg
+        │   ├── components/
+        │   │   └── MyComponent.tsx
+        │   ├── App.tsx
+        │   ├── main.tsx
+        │   └── index.css
+        ├── index.html
+        ├── package.json
+        ├── tsconfig.json
+        └── vite.config.ts
+
+      </code>
+    </pre>
+  </p>
+
+  <p>
+    A pasta <strong><code>public/</code></strong> armazena arquivos estáticos que não precisam ser processados pelo
+    vite. Esses arquivos são servidos diretamente ao navegador e no root da aplicação. Podemos guardar imagens, fontes,
+    etc.., aqui. Por exemplo, "public/favicon.ico" será acessível via "/favicon.ico".
+  </p>
+
+  <p>
+    A pasta <strong><code>src/</code></strong> é a pasta principal do código-fonte do projeto. Nessa página armazenamos
+    todo o código referente a nossa aplicação.
+  </p>
+
+  <p>
+    A pasta <strong><code>components/</code></strong> armazena componentes React.
+  </p>
+
+  <p>
+    O arquivo <strong><code>App.tsx</code></strong> é o componente raiz do React. Normalmente, iniciamos nossa aplicação
+    a partir desse componente.
+  </p>
+
+  <p>
+    O arquivo <strong><code>main.tsx</code></strong> é o ponto de entrada da aplicação. Nesse arquivo é onde o
+    <strong>ReactDOM.render</strong> é chamado para renderizar o componente <strong>App.tsx</strong>.
+  </p>
+
+  <p>
+    O arquivo <strong><code>index.css</code></strong> guarda os estilos globais da nossa aplicação.
+  </p>
+
+  <h1>
+    Como funciona React?
+  </h1>
+
+  <p>
+    React utiliza o <strong>DOM Virtual</strong> para renderizar <strong>componentes</strong> no HTML. O <strong>DOM
+      Virtual</strong> é uma cópia do DOM verdadeiro. Quando uma mudança ocorre na nossa UI, por exemplo, o estado de um
+    componente é alterado, react faz essa alteração no <strong>DOM Virtual</strong> primeiro, compara o DOM virtual com
+    o DOM verdadeiro e só então atualiza a parte que precisa ser alterada no DOM real.
+  </p>
+  <img src="https://tinypic.host/images/2024/06/11/image.png" alt="image">
+
+  <h1>
+    Adicionando React sem NPM
+  </h1>
+
+  <p>
+    Podemos adicionar react no nosso projeto atráves de CDN, inserindo os scripts abaixo no head do nosso HTML.
+  <pre>
+      <code>
+        script src="https://unpkg.com/react@18/umd/react.development.js">script
+        script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js">script
+        script src="https://unpkg.com/@babel/standalone/babel.min.js">script
+      </code>
+    </pre>
+  Porém essa abordagem é recomendada apenas para testes, <strong>não sendo aplicavel para produção.</strong>
+  </p>
+
+  <p>
+    O motivo pelo qual temos que importar duas bibliotecas react no exemplo acima se deve pelo fato de que React não é
+    uma biblioteca apenas para websites, ele também tem recursos para mobile como o <strong>React Native</strong>. Por
+    estarmos trabalhando com websites, nós precisamos importar o <strong>react-dom</strong>.
+  </p>
+
+  <h1>
+    Criando nosso primeiro componente
+  </h1>
+
+  <p>
+    Por convenção, todos os componentes do React são armazenados dentro de uma pasta chamada
+    <strong>components</strong>. No React, nós renderizamos os componentes dentro de um elemento raiz no DOM. Esse
+    elemento raiz pode ser qualquer elemento do DOM.
+  </p>
+
+  <p>
+    A biblioteca <strong><code>react-dom</code></strong> disponibiliza o método
+    <strong><code>.createRoot()</code></strong> e o método <strong><code>.render()</code></strong>. Esses métodos só
+    serao utilizados uma unica vez na nossa aplicação pois eles servem apenas para indicar ao React qual é o elemento
+    raiz onde os componentes serão renderizados.
+  <pre>
+      <code>
+        import ReactDOM from 'react-dom/client';
+
+        ReactDOM.createRoot(document.getElementById('root')!).render(
+        React.StrictMode>
+        
+        React.StrictMode>,
+        );
+      </code>
+    </pre>
+  </p>
+
+  <p>
+    Componentes utilizam <strong>.JSX</strong>. É um formato parecido com HTML onde temos divs e tags misturado com
+    JavaScript. A sintaxe de um componente é basicamente uma função que retorna JSX.
+  <pre>
+      <code>
+        <strong>
+          export function App() {
+            return div>Isso é JSX/div>
+          }
+        </strong>
+      </code>
+    </pre>
+  </p>
+
+  <p>
+    Para mostrar esse componente na página, basta o inserirmos no método <strong><code>.render()</code></strong>.
+  <pre>
+      <code>
+        import ReactDOM from 'react-dom/client';
+        
+        ReactDOM.createRoot(document.getElementById('root')!).render(
+        React.StrictMode>
+        App />
+        React.StrictMode>,
+        );
+      </code>
+    </pre>
+  </p>
+
+  <p>
+    Componentes podem ser reutilizados dentro de outros componentes quantas vezes quisermos. No exemplo abaixo, criei um
+    componente <strong><code>Button</code></strong> e o utilizei duas vezes no componente
+    <strong><code>App</code></strong>.
+  <pre>
+      <code>
+        export function Button() {
+        return div>
+          button>Clique em mim/button>
+        /div>
+        };
+
+        import { Button } from "./button.tsx"
+        export function App() {
+        return div>
+            h1>Oi/h1>
+            Button />
+            Button />
+          /div>
+        };
+      </code>
+    </pre>
+  </p>
+
+  <h1>
+    Conceitos Básicos
+  </h1>
+
+  <h2>
+    React Element
+  </h2>
+
+  <p>
+    Todo elemento React é criado com a função <strong><code>createElement()</code></strong> de baixo dos panos. A biblioteca Babel é a
+    responsável por transformar o elemento criado com JSX em funções de React. Isso significa que quando retornamos JSX, por baixo dos panos o React chama a função <strong><code>.createElement()</code></strong> para criar o elemento no DOM.
+  </p>
+  <img src="https://tinypic.host/images/2024/06/11/imageec0f50a783da2b05.png" alt="image" border="0">
+
+  <h2>
+    Componentes
+  </h2>
+
+  <p>
+    Em React, os componentes permitem que você divida sua interface em pequenos elementos. Devem ser sempre criados através de uma abordagem funcional, evitando utilizar classes e OOP. Não é obrigatório utilizar arrow functions para criar componentes. Uma boa
+    prática é sempre nomear seus componentes com a primeira letra maiscula.
+  </p>
+
+  <p>
+    Dentro da função de componentes, podemos escrever quanto JavaScript quisermos, e podemos passar variáveis dinamicamente ao JSX com <strong>chaves {}</strong>.
+  </p>
+  <img src="https://tinypic.host/images/2024/06/11/image50786559ae41075e.png" alt="image" border="0">
+
+  <h2>
+    Propriedades
+  </h2>
+
+  <p>
+    Em React os componentes são funções então lógicamente eles recebem dados externos, ou seja parâmetros. Para passar dados externos para os nossos componentes, utilizamos de propriedades. Podemos declarar uma propriedade na chamada do componente.
+    <pre>
+      <code>
+        <-React.StrictMode>
+          <-App nome="Vini" />;
+        </-React.StrictMode>
+
+        export function App(props) {
+          return {props.nome};
+        } 
+      </code>
+    </pre>
+    O componente em si, recebe o objeto <strong><mark><code>props</code></mark></strong> onde vai estar contido todas as propriedades que passamos. Usando notação do ponto e <mark>{}</mark> para renderizar JavaScript, podemos passar o valor diretamente no JSX.
+  </p>
+
+  <p>
+    Outra maneira mais curta de pegar os valores das propriedades é utilizando desestruturação.
+    <pre>
+      <code>
+          <-React.StrictMode>
+            <-App nome="Vini" />;
+          </-React.StrictMode>
+          
+          export function App({ nome }) {
+          return {nome};
+          }
+      </code>
+    </pre>
+    Dessa forma, não precisamos declarar o objeto <strong><code>props</code></strong>, assim utilizamos a propriedade diretamente no código.
+  </p>
+
+  <h2>
+    Estado e <code>useState</code>
+  </h2>
+
+  <p>
+    O conceito de estado se refere a dados ou elementos que mudam dinamicamente na nossa aplicação, sem a necessidade do usuário dar um F5 na página. Chamamos esse conceito de <strong>mutável</strong>. E para darmos esse dinamismo a pagina, utilizamos o <strong><mark>useState</mark></strong>.
+  </p>
+
+  <p>
+    Para utilizar esse hook, começamos por importa-lo da biblioteca 'React'. Todo hook deve ser declarado no topo do nosso componente. Dentro do <strong><code>useState</code></strong>, utilizamos da desestruturação para recuperar as duas propriedades que dão vida a esse hook, <strong><mark>[index, setIndex]</mark></strong>. A primeira propriedade é referente ao nome do estado que queremos adicionar dinamismo, ela pode ser alterada para o nome que quisermos. Já a segunda propriedade é a função que vamos utilizar para realmente implementar esse dinamismo na página, ou seja alterar o valor sem que seja necessário atualizar a página.
+    <pre>
+      <code>
+        <-React.StrictMode>
+          <-App nome="Vini" />;
+        <-/-React.StrictMode>
+        
+        import { useState } from 'React';
+
+        export function App({ nome }) {
+          const [name, setName] = useState(nome);
+
+          function handleChangename() {
+            setName('José')
+          }
+          return (
+            &lt;&gt;
+            <-h1>Olá {name}</-h1>
+            <-button onClick={handleChangename}>Mudar Nome<-/-button>
+            &lt;/&gt;
+        );
+      }
+      </code>
+    </pre>
+    Na função <strong><code>useState()</code></strong>, passamos como argumento o estado que esse elemento deve iniciar. No exemplo acima, o estado inicial com o valor que estiver na propriedade <strong><code>nome</code></strong>, se o botão for clicado, o estado atualiza para o nome <strong>José</strong>.
+  </p>
+
+  <h3>
+    Formulários e <code>useState</code>
+  </h3>
+
+  <p>
+    Formulários são um bom exemplo de uso do estado. Os dados de um formulário são mutáveis, se alteram de acordo com que o usuário insere novos dados. Seria uma má experiência para o usuário se, a cada vez que ele inserisse novos dados, a página atualizasse para que esses novos dados sejam mostrados na tela. Para que isso não ocorra, usamos <strong><code>useState</code></strong> para alterar os dados dinamicamente.
+    <pre>
+      <code>
+        export default function Form() {
+          
+          const [name, setName] = useState('');
+          const [age, setAge] = useState(0);
+          const [email, setEmail] = useState('');
+          
+          const userData: User = {
+            name,
+            age,
+            email
+          }
+          const [user, setUser] = useState(userData);
+          
+          function handleRegister(event: React.FormEvent) {
+            event.preventDefault();
+            setUser(userData);
+          }
+          
+          return (
+            <>
+              <-h1">
+                Cadastrando usuário
+              </-h1>
+              <-form action="" onSubmit={handleRegister}>
+                <-label htmlFor="">Nome:</-label>
+                <-input type="text" placeholder="Digite seu nome" value={name} onChange={(event)=> setName(event.target.value)}
+                />
+            
+                <-label htmlFor="">Email:</-label>
+                <-input type="text" placeholder="Digite seu email" value={email} onChange={(event)=> setEmail(event.target.value)}
+                />
+            
+                <-label htmlFor="">Idade:</-label>
+                <-input type="text" placeholder="Digite sua idade" value={age} onChange={(event)=>
+                setAge(Number(event.target.value))}
+                />
+            
+                <-button>Registrar</-button>
+              <-/form>
+              <-div>
+                <-span>Bem vindo {user.name}!</-span>
+                <-span>Você tem {user.age} anos</-span>
+                <-span>Seu email é {user.email}</-span>
+              </-div>
+            </>
+          )
+        }
+      </code>
+    </pre>
+    No exemplo acima, configuramos um formulário simples em JSX e usamos estados para guardar e alterar os valores dinamicamente. Para cada campo de entrada foi usado um <strong><code>useState()</code></strong>, onde guarda o valor atual na primeira propriedade e utiliza a função, que é a segunda propriedade, para alterar o valor.
+
+    <p>
+      Para cada campo de entrada, também foi dado um ouvidor de eventos <strong><mark><code>onChange={}</code></mark></strong>, que chama uma função callback onde passamos o objeto de evento para a função que altera o estado dos elementos. Na função <strong><code>'setAnything'</code></strong>, estamos dinamicamente passando o valor do input que o usuário digitar. Com o ouvidor de eventos <strong><code>onChange</code></strong>, a cada minima mudança que aconteça no input, essa função será chamada.
+    </p>
+
+    <p>
+      Assim, estamos dinamicamente salvando o novo valor nas variáveis <strong><code>name, age, email</code></strong> toda vez que o input muda. Na tag <strong><code>form</code></strong>, adicionamos um ouvidor de eventos para quando o botão for clicado. Como todo formulário, o comportamento padrão é de atualizar a página, para que isso não aconteça usamos <strong><code>event.preventDefault()</code></strong>.
+    </p>
+
+    <p>
+      Dentro da função callback do <strong><mark><code>onSubmit={}</code></mark></strong>, estamos chamando a função <strong><code>setUser()</code></strong>, que altera o estado atual do objeto <strong><code>User</code></strong>, e estamos passando como argumento os novos dados atualizados.
+    </p>
+
+    <p>
+      Criei um objeto chamado <strong><code>userData</code></strong> para armazenar as informações que o usuária digitar e passar direto para a função <strong><code>setUser()</code></strong>. Agora no nosso JSX, basta acessarmos as propriedades do o objeto com notação do ponto.
+    </p>
+  </p>
+
+  <h2>
+    Listas
+  </h2>
+
+  <p>
+    Em react, a forma mais comum de criar uma lista é utilizando um método <strong><code>.map()</code></strong>. Esse método chama uma função para cada elemento do array e essa função pode retornar JSX com dados JavaScript dinamicamente. De uma olhada no exemplo:
+    <pre>
+      <code>
+        function MyList() {
+          const arrayList = ['Oi','Ola', 'Tudo bem?'];
+          return (
+            &lt;&gt;
+              &lt;ul&gt;
+                arrayList.map((element) => (
+                  &lt;li&gt;{element}&lt;/li&gt;
+                ))
+              &lt;/ul&gt;
+            &lt;/&gt;
+          );
+        }
+      </code>
+    </pre>
+    A função callback retorna elementos JSX porque estão envoltos em <strong>parenteses ()</strong> em vez de <strong>chaves {}</strong>. Esses elementos JSX são então renderizados no DOM contendo cada valor do array em uma lista.
+  </p>
+
+  <p>
+    Uma lista sempre deve ter uma propriedade <strong><code>keys</code></strong> com um valor único para cada um dos seus elementos, isso ocorre para ajudar o React a identificar quais itens foram alterados, adicionados ou removidos. Sem essa propriedade, o React re-renderizaria todos os elementos da lista sempre que houvesse uma mudança.
+  </p>
+
+  <h2>
+    Renderização condicional
+  </h2>
+
+  <p>
+    No React, renderização de componentes é basicamente decidir se algo deve aparecer na tela ou não com base em certas condições. É como decidir se você vai ou não usar um guarda-chuva quando está chovendo. No react, podemos fazer isso de algumas maneiras.
+  </p>
+
+  <p>
+    Utilizando o <mark><strong>Operador Ternário</strong></mark>. No exemplo do guarda-chuva seria assim:
+    <pre><code><strong>{isRaining ? <-GuardaChuva /> : null}</strong></code></pre>
+    Se estiver chovendo, o componente <code><strong>GuardaChuva</strong></code> aparecerá na tela, caso não esteja chovendo, nada acontece.
+  </p>
+
+  <p>
+    Utilizando o <mark><strong>Guard Operator &&</strong></mark>. Neste exemplo, algo só é executado se todas as condições forem verdadeiras. No caso do guarda-chuva, seria como dizer "se estiver chovendo e eu tiver um guarda-chuva, use-o". No React seria assim:
+    <pre><code>{isRaining && hasUmbrella && <-GuardaChuva />}<strong></strong></code></pre>
+    Se estiver chovendo e você tem um guarda-chuva contigo, então o componente <strong><code>GuardaChuva</code></strong> será renderizado.
+  </p>
+
+  <p>
+    Utilizando <strong><mark>If-else dentro do JSX</mark></strong>. Às vezes, precisamos de algo mais complicado, como fazer uma pergunta e depois decidir. Você pode usar uma declaração if
+    dentro do JSX. É como perguntar "se estiver chovendo, use um guarda-chuva; caso contrário, não use". No React, isso é
+    feito assim: <pre>
+      <code>
+        <strong>
+          {estaChovendo ? (
+              <-GuardaChuva />
+            ) : (
+              <-SemGuardaChuva />
+            )
+          }
+        </strong>
+      </code>
+    </pre>
+  </p>
+  <h2>
+    Composição
+  </h2>
+
+  <p>
+    O principal motivo de criarmos componentes é para podermos compor a interface com diversos elementos que podem ser
+    reutilizados.
+  </p>
+  <img src="https://tinypic.host/images/2024/06/11/image8505c6ad89d30811.png" alt="image" border="0">
+
+  <h2>
+    JavaScript em JSX/TSX
+  </h2>
+
+  <p>
+    Dentro dos nossos arquivos JSX/TSX, podemos utilizar <strong>chaves {}</strong> para executar código JavaScript ou
+    TypeScript dentro do código JSX/TSX. Segue o mesmo principio que EJS no Node e template string no JavaScript,
+    permite exibir o resultado de uma expressão diretamente no código HTML ou no nosso caso no código JSX/TSX.
+  </p>
+  <img src="https://tinypic.host/images/2024/06/11/image5dd62fef4d17f83e.png" alt="image" border="0">
+
+  <h2>
+    Eventos
+  </h2>
+
+  <p>
+    Em React, nós utilizamos ouvidores de eventos diretamente no elemento. Ao contrário de JavaScript, onde a boa
+    prática é adicionar eventos usando <strong><code>.addEventListener()</code></strong>, em React o uso de eventos diretamente
+    no elemento faz mais sentido para o ecossistema.
+  </p>
+  <img src="https://tinypic.host/images/2024/06/11/image4f5295b61978ddf3.png" alt="image" border="0">
+
+  <h2>
+    Hooks
+  </h2>
+
+  <p>
+    Os hooks são funções especiais do React que permitem realizar comportamentos complexos sem a necessidade de escrever muitas linhas de código. Hooks são mais restritivos que funções, só podemos utilizar Hooks no topo dos nossos componentes. Existem vários hooks, abaixo vamos estudar o <strong><code>useState</code></strong>.
+  </p>
+
+  <h3>
+    <code>
+      useState
+    </code>
+  </h3>
+
+  <p>
+    Frequentemente, os componentes precisam alterar o que está na tela como resultado de uma interação. Digitar no formulário deverá atualizar o input, clicar em "próximo" em um carrossel de imagens deverá alterar a imagem exibida, clicar em "comprar" deverá colocar um produto no carrinho de compras. <strong>Os componentes precisam lembrar coisas</strong>: o valor do input atual, a imagem atual, o carrinho de compras. No React, esse tipo de <strong>mémoria especifíca do componente</strong> é chamada de <strong><mark><code>state</code></mark></strong>.
+  </p>
+
+  <p>
+    <strong>"Estado"</strong> ou <strong>"state"</strong> é um objeto que armazena informações sobre o componente que podem mudar ao longo do tempo. Cada componente React pode ter seu próprio estado, ao mesmo que 1 componente pode ter múltipos estados. Ele é usado para manter dados que precisam ser renderizados na interface do usuário ou que influenciam no comportamento do componente. Quando o estado de um componente muda, o React automaticamente re-renderiza o componente para refletir as mudanças na interface do usuário.
+  </p>
+
+  <p>
+    Com <strong><code>useState</code></strong>, podemos adicionar uma "memória" aos componentes, com isso podemos armazenar e atualizar informações dinâmicas, como dados de formulário, preferências do usuário ou qualquer outra informação que muda ao longo do tempo.
+  </p>
+
+  <p>
+    <strong><code>useState</code></strong> também persiste dados entre renderizações, isso significa que, se algo mudar no DOM e o React precisar renderizar novamente o componente, nenhum dado salvo no hook será perdido, ao contrário do que aconteceria se usassemos váriaveis locais. Quando o React renderiza um componente, ele o faz desde o inicio, não levando em consideração mudanças a variáveis locais.
+  </p>
+
+  <p>
+    Esse hook é um array composto por 2 valores, o primeiro valor é o indice que representa o estado atual do componente, o segundo valor é uma função que deve ser utilizada para atualizar o estado.
+    <pre>
+      <code>
+        [index, setIndex] = useState(0);
+      </code>
+    </pre>
+    O argumento que passarmos para a função <strong><code>useState</code></strong> será usado como valor que representa o estado inicial do componente.
+  </p>
+
+  <p>
+   Note que cada objeto <strong>state</strong> é único e independente para cada componente. Mesmo reutilizando o mesmo componente 3 vezes, essas 3 versões de um mesmo componente terão o seu próprio estado. Isso significa que, ao criar um componente com um botão que conta quantas vezes o usuário clicou, configurar o seu estado e o chamar 2 vezes na aplicação, os dois botões terão contagens diferentes.
+   <pre>
+    <code>
+      <strong>
+        import { useState } from 'react';
+        
+        export default function MyApp() {
+        return (
+          div>
+            h1>Counters that update separately/h1>
+            MyButton /> // Estado independente;
+            MyButton /> // Estado independente;
+          /div>
+          );
+        }
+        
+        function MyButton() {
+        const [count, setCount] = useState(0);
+        
+        function handleClick() {
+        setCount(count + 1);
+        }
+        
+        return (
+          button onClick={handleClick}>
+            Clicked {count} times
+          /button>
+          );
+        }
+      </strong>
+    </code>
+   </pre>
+  </p>
+
+  <h2>
+    Compartilhando dados entre componentes
+  </h2>
+
+  <p>
+    No exemplo anterior, cada botão tinha seu próprio e independente estado, por isso quando um botão era clicado, apenas o botão que foi clicado tinha o estado alterado. Mas, existem situações onde vamos precisar de que componentes compartilhe o mesmo estado, ou seja se um for alterado o outro altere também.
+  </p>
+
+  <p>
+    Para fazer isso acontecer, precisamos mover o estado dos botões individuais "para cima" na hierarquia dos componentes, ou seja, para o elemento pai que contenha todos os botões, no nosso caso seria o componente <strong><code>MyApp</code></strong>.
+    <pre>
+      <code>
+        <strong>
+          export default function MyApp() {
+            const [count, setCount] = useState(0);
+            
+            function handleClick() {
+            setCount(count + 1);
+          }
+          
+          return (
+              <-div>
+                <-h1>Counters that update separately</-h1>
+                <-MyButton />
+                <-MyButton />
+              </-div>
+            );
+          }
+          
+          function MyButton() {
+          // ... we're moving code from here ...
+          }
+        </strong>
+      </code>
+    </pre>
+  </p>
+
+  <p>
+    Agora que o estado do componente está contido no elemento pai do componente <strong><code>MyButton</code></strong>, passamos o estado de <strong><code>MyApp</code></strong> para cada <strong><code>MyButton</code></strong>. Podemos passar dados para outros componentes usando <strong>chaves {}</strong>.
+    <pre>
+      <code>
+        <strong>
+          export default function MyApp() {
+          const [count, setCount] = useState(0);
+          
+          function handleClick() {
+          setCount(count + 1);
+          }
+          
+          return (
+              <-div>
+                <-h1>Counters that update together</-h1>
+                <-MyButton count={count} onClick={handleClick} />
+                <-MyButton count={count} onClick={handleClick} />
+              </-div>
+            );
+          }
+        </strong>
+      </code>
+    </pre>
+  </p>
+
+  <p>
+    Os dados que passamos usando <strong>chaves {}</strong> são chamados de <strong><mark><em>props</em></mark></strong>. Agora o componente <strong><code>MyApp</code></strong> contém a propriedade <strong><code>count</code></strong> e a função que lida com o evento de clique, e os passa como <em>props</em> ou propriedades para cada botão. Note que os elementos passados como propriedades para <strong><code>MyButton</code></strong> são inseridos dentro do objeto <mark><code>props</code></mark>, por isso podemos utilizar desestruturação para acessar diretamente esses valores no nosso código.
+  </p>
+  
+  <p>
+    Por ultimo, devemos configurar nosso componente <strong><code>MyButton</code></strong> para receber os props que estão sendo passados do seu componente pai.
+    <pre>
+      <code>
+        <strong>
+          function MyButton({ count, onClick }) {
+            return (
+              <-button onClick={onClick}>
+                Clicked {count} times 
+              <-/button>
+            );
+          }
+        </strong>
+      </code>
+    </pre>
+  </p>
+
+  <p>
+    O que fizemos acima é chamado de <strong><mark>"Lifting state up"</mark></strong>. Ao mover o estado para cima, você o compartilhou entre os componentes.
+  </p>
+
+  <details>
+    <summary>
+      <h2 style="display: inline;">
+        Abrir complemento
+      </h2>
+    </summary>
+    <h1>
+      Pensando em React
+    </h1>
+    <p>
+      React pode mudar a maneira como pensamos sobre design de software. Quando construimos uma interface de usuário com React, primeiro vamos dividi-lá em pedaços chamados componentes. Então, vamos descrever os diferentes estados visuais para cada componente. Finalmente, vamos conectar todos os componentes para que os dados fluam através deles (<strong><mark>Data Flow</mark></strong>).
+    </p>
+    <p>
+      Ao implementar uma UI em React, devemos seguir 5 passos:
+    </p>
+    <h3>
+      Divida a interface em uma hierarquia de componentes
+    </h3>
+    <p>
+      Comece por desenhar caixas ao redor de cada componente e subcomponente no design e os nomeie. É uma boa prática dividir o design da interface da seguinte maneira:
+      <dl>
+        <dt>
+          <strong>Programação </strong>
+        </dt>
+        <dd>
+          Decida se você deve criar uma função ou objeto para o componente. Siga a técnica do <strong><mark>Principio de responsabilidade única</mark></strong>, que é, um componente idealmente deve realizar apenas uma função. Se crescer demais, deve ser decomposto em componentes menores.
+        </dd>
+        <dt>
+          <strong>CSS</strong>
+        </dt>
+        <dd>
+          Considere para o que você deve criar seletores de classe.
+        </dd>
+        <dt>
+          <strong>Design</strong>
+        </dt>
+        <dd>
+          Considere como você organizaria as camadas do design.
+        </dd>
+      </dl>
+    </p>
+    <h3>
+      Construa primeiro uma versão estática
+    </h3>
+    <p>
+      É mais fácil construir uma versão estática do seu site primeiro e depois adicionar interatividade. Construir uma versão estática requer escrever muito mas pouco pensamento crítico enquanto adicionar interatividade é ao contrário.
+    </p>
+    <h3>
+      Encontre a representação mínima, mas completa, do estado da IU
+    </h3>
+    <p>
+      Para adicionar interatividade, precisamos que os dados mudem na nossa interface. Vamos utilizar os estados para isso. O principio mais importante para estruturar estados é manter <strong>DRY (Don't Repeat Yourself)</strong>. Encontre a representação minima do estado que seu aplicativo precisa e calcule o resto sob demanda. Por exemplo, você está desenvolvendo uma lista de compras, você pode armazenar os itens como um estado em formato de array. Se você quiser mostrar na tela o número de itens que existem na sua lista, não crie um novo estado para armazenar isso, apenas use a propriedade de array <strong><code>.length</code></strong> e passe o valor retornado.
+    </p>
+    <p>
+      Para descobrir se algo se encaixa na definição de estado ou não, faça essas perguntas:
+      <ul>
+        <li>Permanece inalterado ao longo do tempo? Se sim, não é estado</li>
+        <li>É uma propriedade que foi passada de um componente pai? Se sim, então não é estado</li>
+        <li>Você pode calculá-lo com base no estado ou propriedades existentes em seu componente? Se sim, não é um
+        estado!</li>
+      </ul>
+    </p>
+    <h3>
+      Identifique onde incluir o estado
+    </h3>
+    <p>
+      Após identificar os dados de estado mínimo da sua aplicação, você precisa identificar quais componentes são responsaveis por mudar esse estado. React usa <strong><mark>one-way data flow</mark></strong>, ou seja, os dados são passados de cima para baixo na hierarquia de componentes, de pai para filho. Para identificar essas caracteristicas, podemos seguir essas dicas:
+      <ul>
+        Para cada pedaço de estado(data) em sua aplicação:
+        <li>Identifique cada componente que renderiza algo com base nesse estado.</li>
+        <li>Encontre o componente pai comum mais próximo – um componente acima de todos eles na hierarquia.</li>
+        <li>Decida onde incluir o estado:
+          <ul>
+            <li>Podemos inserir o estado diretamente no componente pai</li>
+            <li>Podemos inserir o estado em um componente que esteja acima do componente pai na hierarquia</li>
+            <li>Se você não conseguir encontrar um componente onde faça sentido inserir o estado, crie um novo componente exclusivamente
+            para manter o estado e adicione-o em algum lugar na hierarquia acima do componente pai comum.</li>
+          </ul>
+        </li>
+      </ul>
+    </p>
+  </details>
+    
+
+  <h1>
+    <code>useEffect</code>
+  </h1>
+
+  <p>
+    No react, nós temos o conceito de clico de vida dos componentes, que se refere ao conjunto de etapas pelas quais um componente passa desde sua criação até a sua remoção da tela. Esses estágios incluem montagem, atualização e desmontagem.
+  </p>
+
+  <p>
+    A etapa de <strong>montagem</strong> ou <strong><mark>mounting</mark></strong> ocorre quando o componente é criado e inserido no DOM. A etapa de <strong>atualização</strong> ocorre quando as propriedades e o estado do componente mudam, e a última etapa de <strong>desmontagem</strong> ou <strong><mark>Unmounting</mark></strong> ocorre quando o componente é removido do DOM.
+  </p>
+
+  <p>
+    O hook <strong><code>useEffect</code></strong> trabalha justamente nesse clico de vida da nossa aplicação. Ele aceita dois parâmetros, sendo uma função callback que será chamada toda vez que nossa aplicação for montada e um array de dependencias.
+    <pre>
+      <code>
+        <strong>
+          useEffect(() => {}, []);
+        </strong>
+      </code>
+    </pre>
+    Quando eu digo montada, estou me referindo a toda vez que o site for carregado.
+  </p>
+
+  <p>
+    Dentro do nosso array de dependências, nós especificamos os elementos em que o hook deve vigiar por mudanças em seus estados. Caso essas dependências sofra uma alteração, a função callback será chamada para esse elemento especifico.
+  </p>
+
+  <p>
+    Então, quando você usamos useEffect, estamos dizendo ao React para fazer algo depois que o componente foi renderizado na tela, ou seja depois da etapa de <strong><mark>Mounting</mark></strong>. Por
+    exemplo, se você quiser buscar dados de um servidor quando o componente for exibido, você usaria useEffect para fazer
+    essa solicitação.
+  </p>
+
+  <h1>
+    <code>useCallback</code>
+  </h1>
+
+  <p>
+    Esse hook permite armazenar uma função em cache - ou seja, temporáriamente -. Isso é útil para quando temos uma função que utilizamos repetidas vezes no nosso código, então para não precisar ficar recriando-a várias vezes, utilizamos o <strong><code>useCallback</code></strong> para guardar essa função. 
+  </p>
+
+  <p>
+   Em termos simples, <strong><code>useCallback</code></strong> é usado para memorizar funções em componentes React. Isso melhora a performance da nossa aplicação pois essas funções não são re-renderizadas. Em react, funções são Frequentemente passadas como <mark>props</mark> para componentes filhos. Se essas funções são recriadas a cada renderização do componente pai, isso causaria um consumo desnecessário de recursos.
+  </p>
+
+  <p>
+    Com <strong><code>useCallback</code></strong>, podemos dizer ao React para memorizar essa função, recriando-a apenas quando suas dependências mudarem, garantindo um melhor desempenho.
+  </p>
+
+  <p>
+    Segundo o Matheus Frage no seu curso de Next.js, outro bom uso desse hook é quando estamos manipulando e alterando estados no nosso componente.
+  </p>
+
+  <p>
+    Esse hook recebe como argumentos uma função callback e um array de dependências. Assim como em <strong><code>useEffect</code></strong>, a função callback será chamado caso o estado de uma dependencia tenha sofrido alteração.
+    <pre>
+      <code>
+      const hook = useCallback(() => {}, []);
+      </code>
+    </pre> 
+  </p>
+
+  <p>
+    Em resumo, useCallback é usado para economizar recursos ao evitar a recriação desnecessária de funções, melhorando a
+    eficiência e a velocidade geral do seu aplicativo React.
+  </p>
+
+  <p>
+    Um exemplo de uso desse hook é quando temos funções assíncronas em que fazem requisições a uma API. Podemos utilizar o hook para evitar requisições desnecessárias a cada renderização do componente, melhorando a perfomance.
+  </p>
+
+  <h1>
+    Criando paginação em React
+  </h1>
+
+  <p>
+    No nosso projeto de repositorios do Github, nós consumimos uma API do Github e passamos por meio de queries que ela deve retornar 5 resultados por página.
+  </p>
+</body>
+</html>

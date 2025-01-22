@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><code>useReducer</code></title>
+  <style>
+    body {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>
+    Entendendo <code>useReducer</code>: A alternativa a <code>useState</code>
+  </h1>
+
+  <p>
+    O hook <code>useReducer</code> é uma forma de lidar com estados complexos no React. Inspirado pelo <em><mark>Redux pattern</mark></em>, <code>useReducer</code> é capaz de lidar com lógica de estado complexa que depende de vários subvalores ou de estados anteriores. O hook aceita uma <mark>função redutora</mark> - uma função pura que determina como o estado deve mudar em resposta a determinadas ações - e um estado inicial, fornecendo uma maneira mais organizada de estruturar mudanças de estado.
+  </p>
+  
+  <p>
+    Em um caso de uso tipico, <code>useReducer</code> realiza transições de estado explícitas, o que ajuda a melhorar a previsibilidade do comportamento do componente. Ao disparar - <code>dispatch</code> - ações, você instrui a função redutora a performar as mudanças de estados necessárias. Ao contrário de <code>useState</code>, que atualiza os estados um por um, <code>useReducer</code> utiliza um único objeto de estado, centralizando todas as transições de estado em uma única função. Essa abordagem permite uma separação de responsabilidades; a lógica para atualizar os estados é mantida separada da lógica de UI do componente, resultando em um código mais limpo e mais fácil de manter.
+  </p>
+
+  <p>
+    Entender quando usar <code>useReducer</code> depende da identificação dos sinais de complexidade de estado em seu componente. Se você estiver sincronizando o estado, criando vários <code>useState</code> hooks para controlar várias partes relacionadas do estado, ou passando funções callbacks profundamente aninhadas na árvore de componentes, é hora de considerar o <code>useReducer</code>. Ele brilha em cenários <mark><strong>onde o próximo estado depende intrinsecamente do anterior, ou onde a lógica do estado fica muito confusa para que <code>useState</code> consiga gerencia-lá de forma limpa e organizada</strong></mark>. 
+  </p>
+
+  <p>
+    Um método <code><mark>dispatch</mark></code> é fornecido junto com o estado atual quando <code>useReducer</code> é invocado, esse método é o que você usa para acionar atualizações de estado. <mark><strong>Esse método pode ser passado com segurança para componentes aninhados</strong></mark> sem a necessidade de funções callback, evitando assim re-renderizações desnecessárias e tornando a lógica de estado mais resiliente contra erros humanos. Cada ação despachada para a função redutora pode conter contexto suficiente, por meio da sua propriedade <code>type</code> e quaisquer propriedades adicionais, para descrever mudanças de estado complexas com precisão, o que pode melhorar significativamente a compreensão do seu gerenciamento de estado.
+  </p>
+
+  <p>
+    Entretando, <code>useReducer</code> vem com um ligeiro aumento no código boilerplate em relação a <code>useState</code>. A configuração inicial requer a definição correta da função redutora e a compreensão do <em>Action/Dispatch pattern</em>. No entanto, apesar desse boilerplate inicial, os desenvolvedores podem se beneficiar dos poderosos recursos que o <code>useReducer</code> oferece, especificamente no domínio de estados complexos. Como um exercício de codificação estratégica, considere como uma única função redutora pode limpar um componente com inúmeras variáveis de estado e pondere se os ganhos de legibilidade e capacidade de manutenção valem a mudança de vários <code>useState</code> hook para uma única implementação de <code>useReducer</code>.
+  </p>
+
+  <h1>
+    Projetando a função redutora
+  </h1>
+
+  <p>
+    No dominio de gerenciamento de estado com redutores, <strong><mark>a pureza reina</mark></strong>. Uma função redutora pura permanece livre de efeitos colaterais, contando apenas com seus parametros de input para calcular o novo estado. Isso garante previsibilidade, pois o mesmo conjunto de inputs resulta invariavelmente no mesmo output.
+  </p>
+
+  <p>
+    Vamos entender as <code>actions</code>, blocos cruciais das funções redutoras. Os tipos de <code>action</code> devem ser claros e descritivos, reduzindo a ambiguidade e tornando a base de código mais fácil de raciocinar. Um <code>action</code> pode carregar um tipo como <code>"ADD_TODO"</code> e, quando necessário, dados adicionais que a função redutora utiliza para atualizar o estado.
+  </p>
+
+  <p>
+    A imutabilidade dentro dos redutores é inegociável para manter um histórico de mudanças de estado. Analise o exemplo abaixo:
+  </p>
+
+  <code>
+    <pre>
+      const initialState = {count = 0};
+
+      function reducer(state, action) {
+        switch(action.type) {
+          case 'increment':
+            return {count: state.count + 1};
+          case 'decrement':
+            return {count: state.count - 1};
+          default:
+            throw new Error();
+        }
+      }
+
+      function Counter() {
+        const [state, dispatch] = useReducer(reducer, initialState);
+
+        return (
+          <>
+            Count: {state.count}
+            button onClick={() => dispatch({type: 'decrement'})}> - 
+            button onClick={() => dispatch({type: 'increment'})}> +
+          </>
+        )
+      }
+    </pre>
+  </code>
+
+  <p>
+    Para iniciar o hook, o chamamos com dois argumentos: uma função redutora e o estado inicial. A função redutora é uma função que aceita dois parametros: <code>state</code> e <code>action</code>. O parametro <code>state</code> representa o estado atual (E.g., no inicio o estado é 0, se o botão + for clicado, o estado se torna 1) e o parametro <code>action</code> é um objeto com a propriedade <code>type</code> que diz a função redutora o que deve ser feito.
+  </p>
+
+  <p>
+    Você pode passar informações adicionais no objeto <code>action</code>, como por exemplo:
+  </p>
+
+  <code>
+    <pre>
+      {type: 'incrementBy', number: 3}
+    </pre>
+  </code>
+
+  <p>
+    O estado atualizado é retornado pela função redutora e então armazenado na variavel <code>state</code>, podendo assim ser utilizado pelo componente.
+  </p>
+</body>
+</html>

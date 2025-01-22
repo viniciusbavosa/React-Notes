@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>useRef</title>
+  <style>
+    body {
+      font-size: 2rem;
+    }
+
+    img {
+      display: flex;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>useRef</h1>
+  
+  <p>
+    <code>useRef</code> significa "usar referência" ao pé da letra. Seu comportamento é parecido com o <code>useState</code>, mas com diferenças importantes.
+  </p>
+
+  <p>
+    Ao usar <code>useState</code> na sua aplicação, o comportamento padrão do React é realizar <mark><strong>uma re-renderização do componente toda vez que o estado muda</strong></mark>. <code>useRef</code> também armazena um estado - que é chamado de referência -, mas ao contrário do <code>useState</code>, <mark><em>o React não re-renderiza um componente caso o <code>useRef</code> sofra alteração</em></mark>. O valor de <code>useRef</code> também não pode ser utilizado no JSX, ou seja, ele não pode ser renderizado como UI, diferentemente do <code>useState</code>.
+  </p>
+
+  <p>
+    O <code>useRef</code> retorna um objeto com a propriedade <code>current</code>. Essa propriedade é usada para armazenar um valor que persiste entre renderizações, mas que não provoca re-renderizações quando alterado. 
+  </p>
+
+  <h2>
+    Sintaxe básica
+  </h2>
+
+  <code>
+    <pre>
+      const myRef = useRef(<em>initialValue</em>);
+    </pre>
+  </code>
+
+  <ul>
+    <li>
+      <em>initialValue</em>: Valor inicial que será atribuído à referência. Pode ser qualquer tipo de dado (número, string, objeto, função, etc). Esse valor inicial só é atribuido uma vez, na primeira renderização.
+    </li>
+  </ul>
+
+  <h2>
+    <code>useState</code> vs <code>useRef</code>
+  </h2>
+
+  <p>
+    Vamos analisar o problema abaixo para entender mais a diferente entre os dois hooks.
+  </p>
+
+  <p>
+    Digamos que temos um componente React que renderiza um contador. Cada vez que o botão é clicado, o contador aumenta em 1.
+  </p>
+  <img src="https://i.imgur.com/FuT1RmF.png" alt="">
+  <p>
+    Na lógica do nosso componente, definimos a seguinte lógica:
+  </p>
+
+  <code>
+    <pre>
+      const [count, setCount] = useState(0);
+      const countRef = useRef(0);
+
+      const handleIncrement = () => {
+        setCount(count + 1);
+        countRef.current++;
+
+        console.log('State', count);
+        console.log('Ref', countRef.current);
+      }
+    </pre>
+  </code>
+
+  <p>
+    Então a cada clique, será exibido no console o valor do estado <code>count</code> e o valor da referência <code>countRef</code>. Após o primeiro clique, isso é exibido:
+  </p>
+
+  <img src="https://i.imgur.com/iWdv0NU.png" alt="" height="100">
+
+  <p>
+    <strong>Por que o valor do estado continua em 0 sendo que na UI eu vejo "Count: 1"?</strong>
+  </p>
+
+  <p>
+    O comportamento do <code>useState</code> gira em torno das re-renderizações. No nosso código, o <code>console.log</code> é executado logo após alterarmos o estado com <code>setCount</code>, porém <mark>a primeira renderização ainda não ocorreu. Ela só acontece quando o React termina de executar todas as linhas do componente</mark>. Isso significa que a primeira renderização do componente ocorreu quando o estado <code>count</code> valia 0, como nós estipulamos. Então, como toda mudança de estado ativa uma re-renderização, o componente é re-renderizado quando clicamos no botão e ai sim a mudança de estado é aplicada.
+  </p>
+
+  <p>
+    Porém, em uma re-renderização o React só executa o que é necessário, por isso o <code>console.log('State', count)</code> não foi executado novamente.
+  </p>
+
+  <span><mark><strong>Em <code>useState</code>, a mudança de valor de um estado só fica disponível após a re-renderização do componente.</strong></mark></span>
+
+  <p>
+    Agora ao analisarmos o comportamento de <code>useRef</code>, o valor é instântaneamente alterado. Isso porque <code>useRef</code> não depende e nem causa re-renderizações. Por esse motivo, o valor de <code>useRef</code> não pode ser utilizado na UI, pois caso seja alterado, não sofrerá uma re-renderização e, portanto, sua mudança de valor não será exibida para o usuário.
+  </p>
+
+  <h2>
+    Utilizando <code>useRef</code> para manipular o DOM
+  </h2>
+
+  <p>
+    <code>useRef</code> também pode ser usado para armazenar referências a elementos do DOM. Analise o código abaixo:
+  </p>
+
+  <code>
+    <pre>
+      function Demo({}) {
+        const inputRef = useRef<.HTMLInputElement | null>(null);
+
+        useEffect(() => {
+          inputRef.current.focus();
+        });
+
+        return (
+          <.div className='tutorial'
+            <.input ref={inputRef} type='text' />
+          <./div>
+        )
+      }
+    </pre>
+  </code>
+
+  <p>
+    No código acima, estamos utilizando uma referência do elemento <code>input</code> para aplicarmos <code>.focus()</code> quando o componente for montado. Em um primeiro momento, o código <code>const inputRef = useRef(null)</code> é como um placeholder para a referência do elemento. Assim que o elemento for montado pelo React, ou seja, aparecer na tela, o React irá atribuir o valor de <code>inputRef</code> para a referência do elemento que estiver utilizando o atributo <code>ref={inputRef}</code>. 
+  </p>
+</body>
+</html>

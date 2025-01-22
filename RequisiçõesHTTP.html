@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requisições HTTP em React</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        Requisições HTTP em React
+    </h1>
+    
+    <p>
+        Em React, nós utilizamos os hooks para facilitar nossa vida ao fazer requisições. Nesse exemplo vamos consumir uma api e utilizar seus dados nos nossos componentes.
+    </p>
+
+    <p>
+        Como estudamos no tópico anterior, <strong><code>useEffect</code></strong> é usado no ciclo de vida da nossa aplicação. Quando ela é iniciada, alterada ou desmontada, esse hook é chamado e executa uma ação definida por nós. Por padrão, queremos que os dados da api estejam disponiveis para serem consumidos o quanto antes, para isso podemos utilizar o <strong><code>useEffect</code></strong> para fazer essa requisição no momento que a aplicação for iniciada.
+        <pre>
+            <code>
+                useEffect(() => {
+                    fetch('url')
+                    .then((response) => response.json())
+                    .then((data) => console.log(data)) //Output dados da api
+                }, []);
+            </code>
+        </pre>
+        Agora nossa aplicação busca os dados da api automaticamente toda vez que nossa aplicação é montada.
+    </p>
+
+    <p>
+        Mas e agora, já temos nossos dados porém como vamos exibir esses dados na tela? Não concorda que seria uma má experiência de usuário se a página precisasse atualizar a cada nova requisição feita? Então vamos utilizar um estado para que isso não aconteça. 
+    </p>
+
+    <p>
+        Nós sabemos que por padrão requisições retornam dados em formato JSON, além disso temos acesso ao formato da resposta da nossa API, que é um <strong><mark>array de objetos</mark></strong>. Então podemos configurar <strong><code>useState</code></strong> para iniciar com um array vazio como valor.
+        <pre>
+            <code>
+                [dados, setDados] = useState([]);
+            </code>
+        </pre>
+        A propriedade <strong>dados</strong> armazena os dados que enviaremos com nossa requisição em <strong><code>useEffect</code></strong>.
+    </p>
+
+    <p>
+        Dentro de <strong><code>useEffect</code></strong>, devemos chamar a função <strong><code>setDados</code></strong> e passar o resultado da promise como argumento, assim toda vez que a promise é resolvida, os dados são salvos no estado do <strong><code>useState</code></strong> que configuramos.
+        <pre>
+            <code>
+                function MyApi() {
+
+                    useEffect(() => {
+                        fetch('url')
+                        .then((response) => response.json())
+                        .then((data) => setDados(data)) //Output dados da api enviado para o useState
+                    }, []);
+                    
+                    [dados, setDados] = useState([]);
+                    
+                    return (
+                        &lt;&gt;
+                        {dados.map((data) => (
+                            <-article key={data.id}>
+                                <-h1>{dados.title}</-h1>
+                                <-h3>{dados.subtitle}</-h3>
+                                <-p>{dados.body}</-p>
+                            </article>
+                        ))}
+                    )
+                }
+            </code>
+        </pre>
+        Por fim, mapeamos o array <strong>dados</strong> e acessamos suas propriedades, retornando um elemento JSX para cada objeto existente. <strong><mark>Nao se esqueça que, ao retornamos JSX, sempre devemos utilizar parentêses () para o escopo da função e nunca chaves {}</mark></strong>.
+    </p>
+
+    <h1>
+        Trabalhando com rotas e paginação
+    </h1>
+
+    <p>
+        Para trabalhar com roteamento em React, devemos instalar a biblioteca <strong>react-router-dom</strong>. Essa lib permite configurarmos as páginas da nossa aplicação, por exemplo uma página Home, Sobre, Projetos.
+    </p>
+
+    <p>
+        Para manter a organização da nossa aplicação, devemos sempre criar páginas em um diretório específico, então o recomendado é criar uma pasta <strong>pages</strong>, e dentro dela criar subpastas para armazenar os arquivos individuais das páginas.
+        <pre>
+            <code>
+                src
+                    >pages 
+                        >Home
+                          >index.tsx  
+                        >About
+                          >index.tsx 
+                        >Projects
+                          >index.tsx
+            </code>
+        </pre>
+        Dentro dos arquivos <strong><code>index.tsx</code></strong> devem ficar o componente referente a cada página. Os nomes das pastas dentro do diretório <strong>pages</strong> <mark><strong>devem inicar com letra maíscula obrigatóriamente</strong></mark> assim como os nomes dos componentes.
+    </p>
+
+    <p>
+      Rotas são diferente de componentes, os componentes podem existir dentro das rotas mas as rotas em si são componentes em que queremos que seja renderizado em uma nova página na nossa aplicação, por isso não devemos chamar as rotas dentro do nosso componente principal <strong><code>main.tsx</code></strong>. Em vez disso, é recomendado criar um arquivo de configuração de rotas chamado <strong><mark><code>routes.tsx</code></mark></strong> e chama-lo no arquivo <strong><code>app.tsx</code></strong>.
+    </p>
+
+    <h2>
+      Resolução de módulo padrão
+    </h2>
+
+    <p>
+      A <strong>Resolução de módulo padrão</strong> é uma técnica amplamente utilizada em JavaScript e Node.js que permite importar arquivos especificos sem mencionar explicitamente no <strong><code>import</code></strong>. Isso acontece porque, quando importamos uma pasta/diretório, o sistema de módulos automaticamente procura por um arquivo <strong>'index'</strong> dentro dessa pasta. Se um arquivo <strong>'index'</strong> for encontrado, ele será usado como o ponto de entrada padrão para esse diretório.
+    </p>
+
+    <p>
+      Por isso que nomeamos os arquivos das nossas rotas como <strong><code>'index.tsx'</code></strong>. Como são diretórios que, por padrão sempre possui apenas 1 arquivo, isso facilita a importação dos módulos.
+    </p>
+
+    <h2>
+      Configurando <code>routes.tsx</code>
+    </h2>
+
+    <p>
+      Nesse arquivo é onde configuramos nossas rotas. Primeiro, importamos os componentes <strong><mark><code>{BrowserRouter, Route, Routes}</code></mark></strong> da biblioteca <strong><mark>react-router-dom</mark></strong>
+    </p>
+
+    <p>
+      Após a importação da lib, criamos um componente com um nome padrão <strong><code>Routes</code></strong>. Esse componente vai retornar outros três componentes especificos da biblioteca <strong>react-router-dom</strong> que fazem a conexão com o browser e permite utilizar rotas com URLs limpas.
+      <pre>
+        <code>
+          export default function Routes() {
+            return (
+              <-BrowserRouter>
+                <-Routes>
+                  <-Route path="/" element={<-Home />} />
+                  <-Route path="/projects" element={<- Projects />} />
+                  <-Route element={<-NotFound} /> />
+                <-Routes>
+              <-/BrowserRouter>
+            )
+          }
+        </code>
+      </pre>
+      O componente <strong><code>BrowserRouter</code></strong> envolve as rotas e fornece o contexto do roteamento, o componente <strong><code>Routes</code></strong> serve como um container para as rotas, tudo o que estiver dentro desse elemento será tratado como uma página independente e tudo o que estiver fora será estático, ou seja será mostrado em todas as páginas. O <strong><code>Route</code></strong> define as rotas específicas da aplicação. No exemplo acima, a rota <strong>"/"</strong> renderiza o componente <strong><code>"home"</code></strong>, a rota <strong>"/Projects"</strong> renderiza o componente <strong><code>"Projects"</code></strong> e qualquer outra rota (graças à ausência da propriedade <strong><code>"path"</code></strong> no ultimo <strong><code>"Route"</code></strong>) renderiza o componente <strong><code>"NotFound</code></strong>.
+    </p>
+
+    <h2>
+      O que é o <code>BrowserRouter</code> e o <code>Route</code>
+    </h2>
+
+    <h3>
+      BrowserRouter
+    </h3>
+
+    <p>
+      O BrowserRouter é um componente que gerencia a navegação em uma aplicação React utilizando a API de histórico do
+      navegador (History API). Ele mantém a interface da aplicação sincronizada com a URL do navegador, o que permite a
+      criação de uma aplicação de página única (SPA) com URLs amigáveis e que utilizam a navegação padrão do navegador.
+    </p>
+
+    <p>
+      O BrowserRouter envolve a aplicação ou parte da aplicação onde você deseja habilitar a navegação baseada em rotas. Ele
+      utiliza a API de histórico do navegador para manipular o histórico de navegação, o que significa que você pode usar as
+      funcionalidades padrão do navegador, como "voltar" e "avançar".
+    </p>
+
+    <h3>
+      Route
+    </h3>
+
+    <p>
+      O <strong>Route</strong> renderiza um componente específico quando a URL que estiver contida em <strong><code>path</code></strong> é acessada. Ele monitora a URL atual e renderiza o componente associado àquela rota.
+    </p>
+
+    <p>
+      Esse componente recebe as seguintes propriedades:
+      <ul>
+        <li>
+          <strong>path:</strong> Define o caminho da URL que deve ser correspondido para renderizar o componente.
+        </li>
+        <li>
+          <strong>element:</strong> O componente que deve ser renderizado quando a URL corresponder ao caminho especificado.
+        </li>
+        <li>
+          <strong>exact:</strong> Opcional. Quando true, faz com que a rota corresponda exatamente ao caminho especificado.
+        </li>
+      </ul>
+    </p>
+
+    <h2>
+      Roteamento de links/âncoras
+    </h2>
+
+    <p>
+      Vamos dizer que dentro de um componente eu tenha um botão que, ao ser clicado, me leve para a página de projetos. O <strong>react-router-dom</strong> possui uma maneira especial de realizar esse roteamento com a função <strong><mark>Link</mark></strong>. É simples de ser implementado:
+      <pre>
+        <code>
+          <strong>
+            import { Link } from "react-router-dom";
+
+            function MyComponent() {
+              return (
+                <->
+                  Ir para a página inicial? <-Link to={"/"}>Home<-/Link>
+                <-/>
+              )
+            }
+          </strong>
+        </code>
+      </pre>
+      O atributo <strong><code>"to={}</code></strong> indica ao React para qual rota deve redirecionar o usuário. Agora quando o link Home for clicado, o usuario vai para a página inicial.
+    </p>
+
+    <p>
+      Tenha em mente que, a função <strong><code><*Link></code></strong> só pode ser usada por componentes que estão sendo roteados pelo react-router-dom.
+    </p>
+
+    <p>
+      Um dos benefícios do react-router-dom é que ele não recarrega a página ao mudar de rota, por causa disso ele entrega velocidade e eficiencia para uma boa experiência de usuario.
+    </p>
+
+    <h1>
+      Lidando com rotas que não existem
+    </h1>
+
+    <p>
+      Podemos criar um componente para lidar com erros de rota e retornar uma página de aviso ao usuário, o famoso 404 Not Found. Para que o <strong>react-router-dom</strong> entenda que a rota configurada deve ser renderizada apenas quando o usuário
+      acessar uma rota inexistente, passamos um asteristico como valor para o atributo <mark><strong><code>path="*"</code></strong></mark>.
+      <pre>
+        <code><strong><-Route path="*" element={<-Error />} /></strong></code>
+      </pre>
+      Essa rota precisa ser sempre a última a ser implementada.
+    </p>
+
+    <h1>
+      Trabalhando com IDs em rotas
+    </h1>
+
+    <p>
+      É muito comum em aplicações e-commerces que as URLs possuam IDs em seus endereços para que um produto específico seja encontrado. Esse id se chama <strong>parâmetro de rota</strong> e também os usamos em requisições de API para buscar um dado especifico no banco de dados. Para definir um parâmetro de rota na nossa url, usamos a sintaxe de dois pontos para referenciar de que se trata de um valor mutável:
+      <pre>
+        <strong><-Route path="/produtos/:id" element={<-Produtos />} /></strong>
+      </pre>
+    </p>
+
+    <p>
+      Em React, usamos o hook <strong><code><mark>'useParams'</mark></code></strong> da react-router-dom para utilizar esse parâmetro de rota dentro dos nossos componentes. Usando desestruturação de objetos, selecionamos a propriedade que definimos na rota, no caso acima foi <mark>'id'</mark> mas pode ser qualquer nome que quisermos.
+      <pre>
+        <code>
+          import { useParams } from 'react-router-dom';
+          function Produtos() {
+            const { id } = useParams();
+
+            return (
+              <>
+                h1>Grade de Produtos 
+
+                p> Produto selecionado: {id}
+              </>
+            )
+          }
+        </code>
+      </pre>
+    </p>
+
+    <h1>
+      Utilizando <code>encodeURIComponent()</code>
+    </h1>
+
+    <p>
+      No projeto de repositórios do github, consumimos a API do github para buscar dados de qualquer repositorio que o usuário digitar. O formato que o usuario deve digitar o repositorio é <code>{owner}/{repo}</code>. Nas nossas rotas, a URL que leva aos detalhes do repositórios é composta por um parâmetro de rota, ou seja, por uma parte da URL que é mutável. Por causa de que a sintaxe da api do github pede que o nome do dono do repositórios e o nome do repositórios sejam separados por uma barra "/", acaba causando problemas nas nossas rotas pois o <strong>react-router-dom</strong> entende que o que vem depois da barra "/" é um novo endereço de rota.
+    </p>
+
+    <p>
+      Para resolver esse problema, usamos a função <strong><mark><code>encodeURIComponent()</code></mark></strong>. Ela converte caracteres especiais em uma sequência de escape com um simbolo de porcentagem '%' seguido por dois digitos hexadecimais, podendo ser usada com segurança em uma URI. Isso inclui caracteres como espaço, ponto de exclamação, parênteses, etc.
+    </p>
+
+    <p>
+      Por exemplo, o espaço (' ') é convertido em '%20', a virgula (',') é convertida em '%2c', etc.
+    </p>
+
+    <h1>
+      Usando customHook do react-router-dom
+    </h1>
+
+    <h2><code>useParams()</code></h2>
+
+    <p>
+      O <code>useParams</code> é um hook personalizado que existe apenas no react-router-dom. Ele permite acessar os parâmetros de rota da URL dentro de componentes no React. Esses parâmetros são definidos em rotas que utilizam o componente <strong><code>Route</code></strong> e são acessíveis dentro do componente
+      renderizado por essa rota.
+    </p>
+    <code>
+      <strong>
+        <pre>
+          **routes.ts 
+
+        <-Route path="/user/:id" element={<Profile />} />
+
+        **Profile.tsx 
+
+        let { id } = useParams()
+
+        </pre>
+      </strong>
+    </code>
+
+    <h1>
+      Parâmetros de consultas em requisições HTTP
+    </h1>
+
+    <p>
+      Parâmetros de consulta (ou <strong>query parameters</strong>) são uma forma de enviar ou requerer informações adicionais na URL ao fazer uma requisição HTTP. Eles são adicionados à URL após o símbolo de interrogação <mark><strong>'?'</strong></mark> e são usados para passar dados de filtro, ordenação, paginação, entre outros, para o servidor.
+    </p>
+
+    <h2>
+      Estrutura das query parameters 
+    </h2>
+
+    <p>
+      Uma URL com parâmetros de consulta pode se parecer com isso
+      <pre>
+        <code>
+          https://api.exemplo.com/dados?param1=valor1&param2=valor2
+        </code>
+      </pre>
+      Aqui: 
+      <ul>
+        <li>
+          <mark>'?'</mark> inicia os parâmetros de consulta
+        </li>
+        <li>
+          <mark>'param1=valor1'</mark> é par key-value
+        </li>
+        <li>
+          <mark>'&'</mark> separa múltiplos pares key-value
+        </li>
+      </ul>
+    </p>
+
+    <h2>
+      Utilização dos Parâmetros de Consulta
+    </h2>
+
+    <p>
+      Os parâmetros de consulta são úteis para:
+      <ol>
+        <li>Filtragem de dados: Limitar os dados retornados com base em critérios específicos.</li>
+        <li>Paginação: Dividir grandes conjuntos de dados em partes menores.</li>
+        <li>Ordenação: Ordenar os dados de acordo com um critério específico.</li>
+        <li>Outras operações: Passar informações adicionais que podem ser usadas pelo servidor para processar a requisição.</li>
+      </ol>
+    </p>
+
+    <h2>
+      O que é <code>'URLSearchParams'</code>
+    </h2>
+
+    <p>
+      <strong><code>'URLSearchParams'</code></strong> é uma interface do JavaScript que facilita a construção e manipulação dos parâmetros de consulta em URLs. Ele fornece métodos convenientes para adicionar, remover e manipular esses parâmetros de forma programática.
+    </p>
+
+    <h3>
+      Exemplo de uso do <code>'URLSearchParams'</code>
+    </h3>
+
+    <strong>
+      <code>
+        <pre>
+          const baseUrl = 'https://api.exemplo.com/dados';
+          const params = new URLSearchParams({
+            param1: 'valor1',
+            param2: 'valor2'
+          });
+          
+          fetch(`${baseUrl}?${params}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Erro na requisição: ' + response.statusText);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log(data); // Manipulando os dados recebidos
+          })
+          .catch(error => {
+            console.error('Erro:', error);
+          });
+        </pre>
+      </code>
+    </strong>
+</body>
+</html>
