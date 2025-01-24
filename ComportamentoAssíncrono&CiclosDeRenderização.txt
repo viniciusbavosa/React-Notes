@@ -1,0 +1,30 @@
+Tive um problema ao criar a lógica de um componente em React. Precisava renderizar elementos que eram buscados através de uma requisição assíncrona dentro do hook 'useEffect'. O problema era que eu estava guardando o resultado assíncrono em uma variável comum. Ela era declarada no topo do componente 
+como "let tickets = []", e só era atribuída um valor quando a promise era concluída.
+
+
+Isso estava causando um problema de sincronia de estados. O React sempre renderizava o componente com
+a variável 'tickets' vazia, e não atualizava quando ela era atribuída um valor. Isso estava acontecendo
+porque o React não monitora variáveis comuns, o que faz com que a interface não seja atualizada quando o valor da variável muda.
+
+O problema foi resolvido quando troquei a variável local por um estado, utilizando o hook 'useState'. "const [tickets, setTickets] = useState([])"
+
+Por que isso acontece?
+
+- Variáveis locais não são reativas* no React. Elas existem apenas detro do escopo da
+função e não tem relação com o ciclo de vida do componente.
+
+- Quando você atualiza a variável local "tickets", essa mudança não é percebida pelo React. Então, o componente não é re-renderizado porque o React não sabe que algo mudou.
+
+let tickets = []; // Apenas uma variável local
+tickets = await fetchTickets(); // Atualização da variável, mas o React não re-renderiza
+ 
+
+ 
+1. Comportamento Assíncrono e Ciclos de Renderização:
+
+- Quando você usa variáveis locais em uma requisição assíncrona, o componente principal renderiza antes que os dados sejam carregados, resultando em um array vazio ([]) sendo exibido inicialmente.
+
+
+- Com useState, você mantém o estado inicial ([]), mas assim que a função assíncrona é concluída e setTickets é chamado, o componente é atualizado automaticamente com os novos dados.
+
+* Reatividade é a capacidade de um sistema responder a mudanças nos dados, atualizando a interface do usuário de forma automática.
