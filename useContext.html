@@ -7,5 +7,109 @@
   </head>
   <body>
     <h1><i>useContext</i> Hook</h1>
+
+    <p>
+      A melhor forma de entender contextos em React é imaginar como um espaço
+      independente fora da árvore de componentes onde você pode armazenar dados
+      e os componentes que precisam desses dados podem ir até esse espaço e usar
+      os dados que lá estiverem.
+    </p>
+
+    <p>
+      Em React, esse comportamento pode ser replicado através do hook
+      <i>useContext</i>. Esse hook utiliza do padrão
+      <i>provider-consumer</i> para disponibilizar os dados onde for necessário.
+    </p>
+
+    <p>Vamos imaginar o seguinte cenário:</p>
+
+    <p>
+      Um componente <code>Dashboard</code> está recebendo os dados de usuários
+      através de propriedades. Ele apenas repassa esses dados para seus
+      componentes filhos <code>Sidebar</code> e <code>Profile</code>. O
+      componente em si não faz nada com os dados que recebe.
+    </p>
+
+    <pre>
+      <code>
+        function Dashboard({ user }) {
+          return (
+            Sidebar user={user} />
+            Profile user={user} />
+          )
+        }
+      </code>
+    </pre>
+
+    <p>
+      Em vez de passar os dados de usuário através de propriedades, podemos
+      criar um contexto onde os componentes <code>Sidebar</code> e
+      <code>Profile</code> podem acessar os dados diretamente.
+    </p>
+
+    <h1>Criando contexto</h1>
+
+    <p>
+      Para criar um contexto em React, utilizamos a função
+      <code><strong>createContext</strong></code
+      >. Um contexto nada mais é do que o ambiente em que aqueles dados serão
+      utilizados.
+    </p>
+
+    <p>
+      Essa função recebe um valor padrão como argumento. Esse valor representa o
+      valor que o contexto será inicializado.
+    </p>
+
+    <code>
+      <pre>
+        const DashboardContext = createContext(undefined);
+      </pre>
+    </code>
+
+    <p>
+      Nosso contexto está pronto. Agora, podemos envolver todos os elementos
+      onde queremos que esse contexto esteja disponível. No nosso caso,
+      envolveremos o componente <code>Dashboard</code>.
+    </p>
+
+    <p>
+      Nessa etapa é onde definimos o <code>Provider</code>. Um Provedor é algo
+      que disponíbiliza o contexto.
+    </p>
+    <code>
+      <pre>
+        function Demo() {
+          const [user] = useState({
+            isSubscribed: true,
+            name: 'You'
+          });
+          
+          return (
+          DashboardContext.Provider value={user}>
+            Dashboard />
+          DashboardContext.Provider>
+          );
+        }
+        
+        <h1>
+          Consumindo a loja de contexto
+        </h1>
+
+        <p>
+          Anteriormente nós disponibilizados a loja de contexto para toda a árvore de componentes filhos de <code>Dashboard</code>. Agora, precisamos utilizar essa loja nos componentes filhos. Para isso, o React fornece um hook específico para <mark><strong>consumir contexto</strong></mark>, o <mark><strong><code>useContext</code></strong></mark>
+        </p>
+        <code>
+          <pre>
+            function Sidebar() {
+              const user = useContext(DashboardContext)
+              return (
+                div> {user.name} div>
+              )
+            }
+          </pre>
+        </code>
+      </pre>
+    </code>
   </body>
 </html>
