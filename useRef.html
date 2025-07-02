@@ -23,11 +23,15 @@
   </p>
 
   <p>
+    O <strong>useRef</strong> é um hook para <strong>armazenar valores mutáveis <mark>sem causar re-renderizações</mark> quando esses valores mudam.</strong>
+  </p>
+
+  <p>
     Ao usar <code>useState</code> na sua aplicação, o comportamento padrão do React é realizar <mark><strong>uma re-renderização do componente toda vez que o estado muda</strong></mark>. <code>useRef</code> também armazena um estado - que é chamado de referência -, mas ao contrário do <code>useState</code>, <mark><em>o React não re-renderiza um componente caso o <code>useRef</code> sofra alteração</em></mark>. O valor de <code>useRef</code> também não pode ser utilizado no JSX, ou seja, ele não pode ser renderizado como UI, diferentemente do <code>useState</code>.
   </p>
 
   <p>
-    O <code>useRef</code> retorna um objeto com a propriedade <code>current</code>. Essa propriedade é usada para armazenar um valor que persiste entre renderizações, mas que não provoca re-renderizações quando alterado. 
+    O <code>useRef</code> retorna um objeto com a propriedade <code>current</code>. Essa propriedade é usada para armazenar qualquer valor que persiste entre renderizações, mas que não provoca re-renderizações quando alterado. 
   </p>
 
   <h2>
@@ -37,6 +41,7 @@
   <code>
     <pre>
       const myRef = useRef(<em>initialValue</em>);
+      myRef.current = "Amora"
     </pre>
   </code>
 
@@ -130,5 +135,82 @@
   <p>
     No código acima, estamos utilizando uma referência do elemento <code>input</code> para aplicarmos <code>.focus()</code> quando o componente for montado. Em um primeiro momento, o código <code>const inputRef = useRef(null)</code> é como um placeholder para a referência do elemento. Assim que o elemento for montado pelo React, ou seja, aparecer na tela, o React irá atribuir o valor de <code>inputRef</code> para a referência do elemento que estiver utilizando o atributo <code>ref={inputRef}</code>. 
   </p>
+
+  <h2>Diferença entre <code>useRef</code> e <code>useState</code></h2>
+  <table>
+      <tbody><tr>
+          <th>Característica</th>
+          <th><code>useRef</code></th>
+          <th><code>useState</code></th>
+      </tr>
+      <tr>
+          <td><strong>Re-renderiza o componente?</strong></td>
+          <td>❌ Não</td>
+          <td>✅ Sim</td>
+      </tr>
+      <tr>
+          <td><strong>Mantém valor entre renders?</strong></td>
+          <td>✅ Sim</td>
+          <td>✅ Sim</td>
+      </tr>
+      <tr>
+          <td><strong>Pode ser usado para acessar elementos DOM?</strong></td>
+          <td>✅ Sim</td>
+          <td>❌ Não</td>
+      </tr>
+  </tbody></table>
+
+  <h2>Como funciona <code>useRef</code>?</h2>
+  <p>Quando você usa <code>useRef</code>, ele retorna um objeto com a propriedade <code>.current</code>, onde você pode armazenar qualquer valor:</p>
+
+  <pre>import { useRef } from "react";
+
+function Exemplo() {
+  const contador = useRef(0); // Criando um ref com valor inicial 0
+
+  function incrementar() {
+      contador.current += 1; // Atualizando o valor, mas sem re-renderizar
+      console.log(contador.current); // Mostra o valor atualizado
+  }
+
+  return &lt;button onClick={incrementar}&gt;Incrementar&lt;/button&gt;;
+}
+  </pre>
+
+  <h2>O que acontece nesse código?</h2>
+  <ul>
+      <li>O valor <code>contador.current</code> <strong>persiste entre renders</strong>, mas <strong>não causa re-renderização</strong> quando muda.</li>
+      <li>Se fosse usado <code>useState</code>, o componente se re-renderizaria toda vez que o valor mudasse.</li>
+  </ul>
+
+  <h2>Quando usar <code>useRef</code>?</h2>
+
+  <h3>1. Para acessar elementos do DOM</h3>
+  <pre>import { useRef, useEffect } from "react";
+
+function ExemploInput() {
+  const inputRef = useRef(null);
+
+  useEffect(() =&gt; {
+      inputRef.current.focus(); // Foca no input quando o componente monta
+  }, []);
+
+  return &lt;input ref={inputRef} placeholder="Digite algo..." /&gt;;
+}
+  </pre>
+
+  <h3>2. Para armazenar valores sem re-renderizar</h3>
+  <ul>
+      <li>Contadores que não afetam a UI imediatamente.</li>
+      <li>Guardar valores anteriores de um estado.</li>
+      <li>Criar timers, intervalos ou armazenar referências a elementos externos.</li>
+  </ul>
+
+  <h2>Resumo</h2>
+  <ul>
+      <li><code>useRef</code> é um "armazenamento oculto" que <strong>não re-renderiza</strong> o componente.</li>
+      <li><code>useState</code> <strong>sempre re-renderiza</strong> quando o valor muda.</li>
+      <li>Use <code>useRef</code> quando precisar <strong>armazenar um valor mutável sem afetar a renderização</strong>.</li>
+  </ul>
 </body>
 </html>

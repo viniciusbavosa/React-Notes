@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prefetching Data in React</title>
+  <style>
+    body {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Prefetching Data in React</h1>
+
+  <p>
+    Muitos desenvolvedores React possuem o costume de realizar requisições
+    HTTP dentro de componentes. Isso significa que, os dados só serão buscados
+    <mark><strong>após o componente renderizar</strong></mark>. Se levarmos em conta que o navegador do usuário primeiro
+    precisa fazer
+    o download do <em>bundler</em> antes do react ser executado, aumenta mais
+    ainda o delay que leva para a requisição HTTP ser enviada.
+  </p>
+
+  <p>
+    Uma solução a esse problema é pré-buscar os dados, antes mesmo do
+    componente começar a ser renderizado.
+    <mark><strong>Podemos realizar essa técnica ao desacoplar os dados do componente e
+        passar a enxerga-los como parte da rota</strong></mark>.
+  </p>
+
+  <p>
+    Pense comigo: Na maioria dos casos, a busca de dados não está relacionada
+    ao componente em si, mas as rotas. Quando acessamos uma rota, por exemplo
+    a rota '/artigos', é implicito que queremos buscar esses artigos de algum
+    lugar, o componente serve apenas para exibi-los de uma forma que agrade ao
+    usuário.
+  </p>
+
+  <p>
+    O Tanstack Query, biblioteca de roteamento do React facilita esse
+    processo. Abaixo exemplos utilizando as duas bibliotecas:
+  </p>
+
+  <h2>Tanstack Router</h2>
+
+  <p>
+    Com o Tanstack Router, podemos criar rotas diretamente no componente com o
+    método
+    <mark><strong><code>createFileRouter()</code></strong></mark>. Esse método retorna uma outra função, a qual podemos
+    chamar e passar o
+    componente que deve ser renderizado nessa rota. Exemplo:
+  </p>
+
+  <code>
+      <pre>
+        export const Route = createFileRouter('/')({
+          component: Index
+        })
+      </pre>
+    </code>
+
+  <p>
+    Agora, para realizarmos a pré-busca de dados nessa rota, usamos uma função
+    <mark><strong>loader</strong></mark> fornecida pelo Tanstack Router
+  </p>
+
+  <code>
+      <pre>
+        const POST_ID = 1;
+
+        export const Route = createFileRouter('/')({
+          component: Index,
+          loader: async ({ context: { queryClient }}) => {
+            <mark><strong>await queryClient.prefetchQuery({
+              queryKey: ['posts', POST_ID],
+              queryFn: () => fetch(POST_ID)
+            })</strong></mark>
+          }
+        })
+      </pre>
+    </code>
+
+  <small><mark><strong>Caso você não queira bloquear a renderização da UI, não utilize
+        <em>await</em>. Em vez disso, forneça um componente
+        <em>suspense</em> para exibir até que os dados estejam
+        disponíveis</strong></mark></small>
+
+  <p>
+    No exemplo acima, a função <strong>loader</strong> recebe o contexto do
+    Tanstack query por meio de injeção de dependência que a própria biblioteca
+    realiza. <mark><strong>Por estarmos utilizar Tanstack Query</strong></mark>, podemos utilizar o
+    <code>queryClient</code> para <em>prefetch</em> os
+    dados com o método
+    <mark><strong><code>prefetchQuery</code></strong></mark>.
+  </p>
+
+  <p>
+    Para ficar claro, a função <em>loader</em> permite executar uma função
+    quando a rota é acessada. O método
+    <mark><strong><code>queryClient.prefetchQuery</code></strong></mark>
+    do Tanstack Query permite realizar requisições HTTP antecipadamente. Com
+    isso, nossos dados ficarão disponíveis para ser consumidos pelo componente
+    antes mesmo do React iniciar.
+  </p>
+
+  <p>
+    Agora que desacoplamos a requisição HTTP do componente, precisamos exibir
+    algo para o usuário caso essa requisição demore um tempo maior que o
+    esperado. É aqui que entra o hook
+    <mark><strong><code>useSuspenseQuery</code></strong></mark>
+    do Tanstack Query.
+  </p>
+
+  <p>
+    Esse hook exibe uma <em>fallback</em> até os dados estarem prontos para
+    serem usados.
+  </p>
+
+  <code>
+      <pre>
+        function Index() {
+          const postsQuery = useSuspenseQuery({
+            queryKey: ['posts', POST_ID],
+            queryFn: () => fetch()
+          })
+        }
+      </pre>
+    </code>
+
+  <p>
+    Para exibir as <em>fallbacks</em>, você pode definir um
+    <mark><strong><code>pedingComponet</code></strong></mark>
+    e um
+    <mark><strong><code>errorComponent</code></strong></mark>
+    no objeto de configuração do TanStack Router
+  </p>
+
+  <code>
+      <pre>
+        const POST_ID = 1;
+
+        export const Route = createFileRouter('/')({
+          component: Index,
+          pedingComponet: () => div>Loading.../div>,
+          errorComponent: () => Error
+          loader: async ({ context: { queryClient }}) => {
+            <mark><strong>await queryClient.prefetchQuery({
+              queryKey: ['posts', POST_ID],
+              queryFn: () => fetch(POST_ID)
+            })</strong></mark>
+          }
+        })
+      </pre>
+    </code>
+</body>
+
+</html>

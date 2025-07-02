@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>useCallback</title>
+    <style>
+      body {
+        font-size: 2rem;
+      }
+
+      img {
+        display: block;
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+      Para explicar <code>useCallback</code>, vou utilizar um exemplo de
+      aplicação escrito. Caso deseje ter uma ajuda visual para entender os
+      conceitos, acesse o video
+      <a
+        href="https://www.youtube.com/watch?v=MxIPQZ64x0I&list=PLApy4UwQM3UrZsBTY111R6P4frt6WK-G2&index=58"
+        >Learn React Hooks: useCallback - Simply Explained!
+      </a>
+    </h1>
+
+    <h1>
+      <code>useCallback</code>
+    </h1>
+
+    <p>
+      <code>useCallback</code> é um dos hooks para aprimoramento de performance
+      que o React oferece. Você não utilizará esse hook frequentemente como
+      <code>useState</code> ou <code>useEffect</code>, porém, se usado de
+      maneira correta, ele pode ter um impacto positivo na performance da sua
+      aplicação.
+    </p>
+
+    <img src="https://i.imgur.com/FrIKNiT.gif" />
+    <p>
+      Para esse tópico, temos uma simples aplicação que busca itens em uma lista
+      de valores. Ao digitar caracteres no campo de input, a lista é
+      automaticamente atualizada contendo os valores que possuem os caracteres
+      escritos.
+    </p>
+
+    <p>A estrutura no código React é a seguinte:</p>
+
+    <code>
+      <pre>
+        import { useState } from 'react';
+        import { shuffle } from '@/utils';
+        import Search from './Search';
+
+        // Lista em memória
+        const allUsers = [
+          "john",
+          "alex",
+          "george",
+          "simon",
+          "james"
+        ];
+
+        interface DemoProps {}
+
+        export default function Demo({}: DemoProps) {
+          const [users, setUsers] = useState(allUsers);
+
+          // Função que filtra a lista com base
+          // no input
+
+          const handleSearch = (text: string) => {
+            const filteredUsers = allUsers.filter((user) => user.includes(text));
+
+            setUsers(filteredUsers);
+          };
+            return (
+              Search onChange={handleSearch} /> // Componente de input
+
+              ul>
+                users.map((user) => (
+                li>{user}li>
+              ))
+              ul>
+            )
+          }
+        
+      </pre>
+    </code>
+
+    <p>Estrutura do componente de input:</p>
+
+    <code>
+      <pre>
+        import { memo } from 'react';
+
+        interface SearchProps {
+          onChange: (text: string) => void
+        }
+
+        function Search({ onChange }: SearchProps) {
+          return (
+            input 
+              onChange={(e) => onChange(e.target.value)}
+            />
+          )
+        }
+
+        <strong>export default memo(Search) // Exporta o componente memorizado</strong>
+      </pre>
+    </code>
+
+    <h2>High-Order Component <code>memo</code></h2>
+
+    <p>
+      O <code>memo</code> também é usado para melhorar a performance. Quando
+      você envolve um componente com esse hook, ele impede que seu componente
+      seja re-renderizado várias vezes seguidas sem que mudanças que o afetem
+      diretamente tenham acontecido.
+      <mark
+        ><strong
+          >Em outros termos, o <code>memo</code> permite que um componente
+          re-renderize apenas se suas propriedades mudarem de valor</strong
+        ></mark
+      >.
+    </p>
+
+    <span
+      ><em
+        ><strong
+          ><code>Memo</code> impede re-renderizações desnecessárias quando as
+          props não mudam.
+        </strong></em
+      ></span
+    >
+
+    <p>
+      No exemplo acima, o componente <code>Search</code> só será renderizado se
+      <strong><code>onChange</code></strong> mudar de valor. Ele vai verificar
+      se o valor de <code>onChange</code> é diferente do seu valor antigo. Caso
+      seja, o componente será re-renderizado, caso não seja, nada acontece.
+    </p>
+
+    <h2>Testando as re-renderizações</h2>
+
+    <p>
+      O uso de <code>memo</code> está ligado ao uso de
+      <code>useCallback</code> nesse exemplo. Agora que <code>memo</code> está
+      claro, vamos colocar um <code>console.log</code> dentro do componente
+      <code><strong>Search</strong></code> e verificar quantas vezes ele é
+      renderizado.
+    </p>
+
+    <img src="https://i.imgur.com/ozGFQlh.gif" />
+
+    <p>
+      A primeira renderização é algo normal, o componente precisa ser
+      renderizado para ser exibido na tela. Entretando observe que, quando o
+      botão <strong><em>Shuffle</em></strong> é clicado e a lista de usuários
+      reordenada, o componente <code><strong>Search</strong></code> sofre uma
+      re-renderização.
+      <mark
+        ><strong
+          >Isso não era para estar acontecendo, afinal a propriedade do
+          componente — que é a função <code>onChange</code>, não sofreu nenhuma
+          alteração</strong
+        ></mark
+      >. Somente o componente <code>Demo</code> deveria ser re-renderizado.
+    </p>
+
+    <code>
+      <pre>
+        const handleSearch = (text: string) => {
+            const filteredUsers = allUsers.filter((user) => user.includes(text));
+
+            setUsers(filteredUsers); 
+          }
+
+Search onChange={handleSearch} < <strong>Sua referencia muda a cada 
+  renderização</strong>
+      </pre>
+    </code>
+
+    <p>
+      É aqui que entra a pegadinha! No React,
+      <mark><strong>funções são recriadas a cada renderização.</strong></mark
+      >. Isso significa que a função <strong><code>onChange</code></strong> da
+      primeira renderização não existe mais, e uma nova função de mesmo nome foi
+      criada e passada para o componente <strong><code>Search</code></strong
+      >. Então, na prática, a propriedade mudou sim.
+    </p>
+
+    <h2>Utilidade do <code>useCallback</code></h2>
+
+    <img src="https://i.imgur.com/4kXyK3t.gif" />
+    <p>
+      O <code>useCallback</code> serve para mitigar esse problema de referências
+      diferente.
+      <mark
+        ><strong
+          >Ele congela a função, impedindo que sua referência mude entre
+          re-renderizações.</strong
+        ></mark
+      >
+      Portanto, ao envolver <code><strong>handleSearch</strong></code> em um
+      <code>useCallback</code>, sua referência nunca vai mudar e
+      <code>memo</code> terá o comportamento desejado.
+    </p>
+
+    <code>
+      <pre>
+      import { useCallback } from 'react';
+
+      const handleSearch = useCallback((text: string) => {
+        const filteredUsers = allUsers.filter((user) => user.includes(text));
+
+        setUsers(filteredUsers);
+            
+      }, [users]);
+    </pre
+      >
+    </code>
+
+    <p>
+      O array de dependências do <code>useCallback</code> permite que você
+      controle
+      <strong
+        ><mark
+          >quando uma nova referência deve ser recriada para a função</mark
+        ></strong
+      >. No exemplo acima, toda vez que o estado <code>users</code> for
+      alterado, uma nova função será criada e, portanto, o componente
+      <code>Search</code> também será re-renderizado.
+    </p>
+
+    <h2>Perigos do <code>useCallback</code></h2>
+
+    <p>
+      Como esse hook congela completamente uma função, qualquer alteração de
+      estado não será refletida dentro da função. Por isso,
+      <mark
+        ><strong
+          >sempre se lembre de passar os estados necessários para que a função
+          seja recriada no array de dependências</strong
+        ></mark
+      >
+    </p>
+  </body>
+</html>

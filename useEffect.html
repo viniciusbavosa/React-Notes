@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>useEffect</title>
+  <style>
+    body {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1><code>useEffect</code> Hook</h1>
+  
+  <h2>
+    Manipulando o DOM. Quando usar <code>useEffect</code>?
+  </h2>
+
+  <p>
+    <strong>Depende</strong>. Se você estiver apenas adicionando ouvidores de eventos em elementos do DOM, não é necessário utilizar o <code>useEffect</code> porque o React garante que o DOM já esteja criado antes de anexar os ouvidores de eventos.
+  </p>
+
+  <p>
+    O <code>useEffect</code> é geralmente usado para manipular o DOM porque ele roda <mark><strong>após a renderização</strong></mark>, ou seja após a construção do DOM. Isso garante que os elementos já existam.
+  </p>
+
+  <code>
+    <pre>
+      // Exemplo sem usar useEffect
+      const MyComponent = () => {
+        const handleClick = () => {
+          console.log("Elemento clicado!");
+        };
+
+  return button onClick={handleClick}>Clique Aqui</button>;
+};
+    </pre>
+  </code>
+
+  <p>
+
+  No exemplo acima, o evento de clique é adicionado diretamente no JSX. Não há a necessidade de usar o <code>useEffect</code> para garantir que o DOM esteja pronto, pois o React já lida com isso.
+  </p>
+
+  <h3>
+    Quando você deve usar o <code>useEffect</code>
+  </h3>
+
+  <p>
+    Um dos muitos casos de uso do <code>useEffect</code> é quando voc~e precisa interagir diretamente com o DOM <mark><strong>fora do fluxo de renderização padrão do React</strong></mark>, como quando:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Manipulação Manual do DOM</strong>: Quando usamos <code>document.querySelector</code> para selecionar um elemento do DOM. Na maioria das vezes, prefira utilizar <code>useRef</code>, pois <code>document.querySelector</code> não segue o padrão das renderizações do react, se você mudar de página, ele retornará "null" até a página ser recarregada novamente.
+    </li>
+    <li>
+      <strong>Adição de efeitos colaterais</strong> que não podem ser controlados diretamente pelo React (como integrações com bibliotecas externas que manipulam o DOM, ou requisições HTTP).
+    </li>
+    <li>
+      <strong>Execução de código após o DOM ser montado</strong> (ou após atualizações específicas).
+    </li>
+  </ul>
+
+  <p>
+    O <code>useEffect</code> é executado <strong>após a renderização</strong>, o que garante que todos os elementos do DOM já foram montados e estão disponíveis para manipulação.
+  </p>
+
+  <code>
+    <pre>
+      import { useEffect, useRef } from "react";
+
+    const MyComponent = () => {
+      const divRef = useRef(null);
+
+      useEffect(() => {
+        if (divRef.current) {
+          divRef.current.style.backgroundColor = "lightblue";
+          divRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }, []); // O useEffect é executado apenas uma vez após o primeiro render
+
+      return div ref={divRef}>Este é um exemplo</div>;
+    };
+
+    </pre>
+  </code>
+
+  <p>
+    No exemplo acima, o <code>useEffect</code> é necessário para garantir que a manipulação do DOM (como definir o <code>backgroundColor</code> ou chamar <code>scrollIntoView</code>) ocorra após o DOM ter sido montado. <mark><strong> E como não estamos realizando essas alterações dentro de uma função de ouvidor de eventos, o <code>useEffect</code> se faz necessário</strong></mark>.
+  </p>
+</body>
+</html>

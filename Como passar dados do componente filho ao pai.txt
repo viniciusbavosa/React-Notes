@@ -4,7 +4,7 @@ Em react, os dados fluem de maneira unidirecional, ou seja do componente pai > a
 
 Para isso, utilizamos funções call-backs. A definição de uma função call-back segundo o MDN é: Uma função que é passada para outra função como um argumento, que é então invocada dentro da função externa para completar algum tipo de rotina ou ação.
 
-Em outras palavras, funções call-backs são úteis para quando necessitamos realizar uma ação após um período de tempo indeterminado. Por exemplo: Operações assíncronas podem demorar X tempo para serem finalizadas. Quem vai estar lá para receber o resultado dessa operação e traze-lo para o fluxo síncrono da aplicação? A função call-back.
+Em outras palavras, funções callbacks são úteis para quando necessitamos realizar uma ação após um período de tempo indeterminado. Por exemplo: Operações assíncronas podem demorar X tempo para serem finalizadas. Quem vai estar lá para receber o resultado dessa operação e traze-lo para o fluxo síncrono da aplicação? A função callback.
 
 Em um contexto React, para que o filho sirva seus dados a um componente acima na hierarquia, ou seja seu componente pai, utilizamos uma técnica chamada de "Lifting up State", que consiste em levar toda a lógica de manipulação dos dados para o componente pai, e utilizar uma função call-back para ter acesso a esses dados quando estiverem prontos.
 

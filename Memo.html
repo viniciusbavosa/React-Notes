@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memo</title>
+    <style>
+      body {
+        font-size: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>High-Order Component <code>memo</code></h1>
+
+    <p>
+      O <code>memo</code> também é usado para melhorar a performance. Quando
+      você envolve um componente com esse hook, ele impede que seu componente
+      seja re-renderizado várias vezes seguidas sem que mudanças que o afetem
+      diretamente tenham acontecido.
+      <mark
+        ><strong
+          >Em outros termos, o <code>memo</code> permite que um componente
+          re-renderize apenas se suas propriedades mudarem de valor</strong
+        ></mark
+      >.
+    </p>
+
+    <span
+      ><em
+        ><strong
+          ><code>Memo</code> impede re-renderizações desnecessárias quando as
+          props não mudam.
+        </strong></em
+      ></span
+    >
+
+    <h1>Situações onde <code>memo</code> pode ser usado</h1>
+
+    <p>
+      Caso tenha diversos sub-componentes independentes recebendo diferentes
+      propriedades de um componente pai em comum, é um bom cenário utilizar
+      <code>memo</code> para impedir renderizações desnecessárias.
+    </p>
+
+    <span>Exemplo de uso no arquivo <em>useCallback.html</em></span>
+  </body>
+</html>
